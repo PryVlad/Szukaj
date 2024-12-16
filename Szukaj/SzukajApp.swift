@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct SzukajApp: App {
+    @StateObject var viewModel = Szukaj()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(app: viewModel)
         }
     }
 }

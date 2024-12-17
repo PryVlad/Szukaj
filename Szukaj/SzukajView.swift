@@ -11,18 +11,28 @@ struct SzukajView: View {
     @ObservedObject var app: Szukaj
     
     var body: some View {
-        VStack {
-            Logo("szukaj")
-                .padding(CST.padding)
-            printOffers
-            Spacer()
+        ScrollView {
+            VStack {
+                Logo("szukaj")
+                    .padding(CST.padding)
+                printOffers
+            }
+            VStack(spacing: 0) {
+                Rectangle().frame(height: 500).foregroundStyle(.gray)
+                Rectangle().frame(height: 500).foregroundStyle(.black)
+                Rectangle().frame(height: 500).foregroundStyle(.gray)
+            }
+            .padding(.top, -8) // thanks apple
         }
+        BottomNavigation()
+            .environmentObject(app)
     }
     
 //    TotalOffers(amount: app.offers)
     var printOffers: some View {
-        Rectangle().frame(width: .infinity, height: CST.Offers.height)
+        Rectangle()
             .foregroundStyle(.gray.opacity(CST.Offers.opacity))
+            .frame(height: CST.Offers.height)
             .overlay {
                 TotalOffersIntended(amount: app.offers,
                                     orderDelay: $app.orderDelay)

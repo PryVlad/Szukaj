@@ -9,6 +9,7 @@ import SwiftUI
 
 class Szukaj: ObservableObject {
     @Published var szukaj = SzukajRoot()
+    @Published var activeNav = "Start"
     
     var orderDelay: TimeInterval = 0
     var offers: Int { szukaj.fakeOffersCount }

@@ -12,11 +12,30 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            TotalOffers(amount: 9020406034543)
-                .font(.title)
-            TotalOffersIntended(amount: 9020406034543,
-                                orderDelay: $app.orderDelay)
-                .font(.title)
+            Logo("szukaj")
+                .padding(CST.padding)
+            printOffers
+            Spacer()
+        }
+    }
+    
+//    TotalOffers(amount: app.offers)
+    var printOffers: some View {
+        Rectangle().frame(width: .infinity, height: CST.Offers.height)
+            .foregroundStyle(.gray.opacity(CST.Offers.opacity))
+            .overlay {
+                TotalOffersIntended(amount: app.offers,
+                                    orderDelay: $app.orderDelay)
+                .font(.system(size: CST.Offers.textSize, weight: .semibold))
+            }
+    }
+    
+    private struct CST {
+        static let padding = 10.0
+        struct Offers {
+            static let height: CGFloat = 70
+            static let textSize: CGFloat = 24
+            static let opacity = 0.2
         }
     }
 }

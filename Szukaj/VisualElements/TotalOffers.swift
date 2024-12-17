@@ -52,6 +52,10 @@ struct TotalOffersIntended: View { // ios 17 not minimal yet.
             ForEach(getRNumbers(amount).enumerated().reversed(), id: \.offset) { num in
                 OneDigit(range: num.element, delay: $orderDelay)
             }
+            Text(" ofert pracy")
+        }
+        .onDisappear {
+            orderDelay = 0
         }
     }
     

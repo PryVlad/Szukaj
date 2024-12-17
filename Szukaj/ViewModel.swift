@@ -8,7 +8,9 @@
 import SwiftUI
 
 class Szukaj: ObservableObject {
-    @Published var jojo = 10
+    @Published var temp = 0
     
     var orderDelay: TimeInterval = 0
+    var offers: Int { 9020406034543 }
+    
 }

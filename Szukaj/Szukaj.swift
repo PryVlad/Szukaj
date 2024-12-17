@@ -8,9 +8,9 @@
 import SwiftUI
 
 class Szukaj: ObservableObject {
-    @Published var temp = 0
+    @Published var szukaj = SzukajRoot()
     
     var orderDelay: TimeInterval = 0
-    var offers: Int { 9020406034543 }
+    var offers: Int { szukaj.fakeOffersCount }
     
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct SzukajView: View {
     @ObservedObject var app: Szukaj
     
     var body: some View {
@@ -43,5 +43,5 @@ struct ContentView: View {
 
 
 #Preview {
-    ContentView(app: Szukaj())
+    SzukajView(app: Szukaj())
 }

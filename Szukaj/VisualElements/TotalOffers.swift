@@ -83,7 +83,7 @@ struct TotalOffersIntended: View { // ios 17 not minimal yet.
         }
         
         private func textOpacity() -> Double {
-            range > 0 ? 1 : (range == -1 ? 1 : 0)
+            range > 0 || range == -1 ? 1 : 0
         }
         
         private func startAnimation(_ trueValue: Int) {

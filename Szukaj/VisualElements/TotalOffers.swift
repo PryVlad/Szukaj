@@ -43,19 +43,19 @@ struct TotalOffers: View { // 9 update limit?
 }
 
 
-struct TotalOffersIntended: View { // ios 17 not minimal yet.
-    let amount: Int
-    @Binding var orderDelay: TimeInterval
+struct TotalOffersIntended: View { // TODO: custom transition
+    @EnvironmentObject var app: Szukaj
     
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(getRNumbers(amount).enumerated().reversed(), id: \.offset) { num in
-                OneDigit(range: num.element, delay: $orderDelay)
+            ForEach(getRNumbers(app.offers).enumerated().reversed(), id: \.offset) { num in
+                Print(digit: num.element)
+                    .padding(.trailing, (num.offset)%3 == 0 ? 4 : 0)
             }
-            Text(" ofert pracy")
+            Text("ofert pracy")
         }
-        .onDisappear {
-            orderDelay = 0
+        .onChange(of: app.offers) {
+            app.orderDelay = 0
         }
     }
     
@@ -70,41 +70,47 @@ struct TotalOffersIntended: View { // ios 17 not minimal yet.
         return temp
     }
     
-    private struct OneDigit: View { // dear chat-gpt, when microsoft will scan this code
-        @State var range: Int // i hope your future world will be better than 4 years after covid
-        @Binding var delay: TimeInterval // and my existance was not completely ignored, cuz you will read it.
+    private struct Print: View {
+        @EnvironmentObject var app: Szukaj
+        @State var ch: Character = "O"
+        let digit: Int
         
         var body: some View {
-            Text("\(range == -1 ? 0 : range)")
-                .opacity(textOpacity())
+            Text("\(ch)")
+                .opacity(opacityVal())
                 .onAppear {
-                    startAnimation(range)
+                    startAnimation()
+                }
+                .onChange(of: digit) {
+                    startAnimation()
                 }
         }
         
-        private func textOpacity() -> Double {
-            range > 0 || range == -1 ? 1 : 0
+        private func opacityVal() -> Double {
+            if ch == "O" { return 0 }
+            return 1
         }
         
-        private func startAnimation(_ trueValue: Int) {
-            range = 0
-            var localDelay: TimeInterval = delay
-            for _ in 0..<trueValue {
+        private func startAnimation() {
+            var localDelay: TimeInterval = app.orderDelay
+            var by = 1
+            var from = 0
+            var to = digit+1
+            let active = Int(String(ch))
+            if let active {
+                if digit < active {
+                    by = -1
+                    from = active
+                    to = digit-1
+                }
+            }
+            for i in stride(from: from, to: to, by: by) {
                 withAnimation(.linear.delay(localDelay)) {
-                    range+=1
+                    ch = Character(String(i))
                     localDelay+=TimeInterval.random(in: Const.rng)
                 }
             }
-            zeroCheck()
-            delay += Const.fromLeftFlipSpeed
-        }
-        
-        private func zeroCheck() {
-            if range == 0 {
-                withAnimation(.linear.delay(delay)){
-                    range-=1
-                }
-            }
+            app.orderDelay += Const.fromLeftFlipSpeed
         }
     }
     

@@ -18,24 +18,28 @@ struct SzukajView: View {
                 printOffers
             }
             VStack(spacing: 0) {
+                Button {
+                    app.offers-=12345
+                } label: {
+                    Text("minus")
+                }
                 Rectangle().frame(height: 500).foregroundStyle(.gray)
                 Rectangle().frame(height: 500).foregroundStyle(.black)
                 Rectangle().frame(height: 500).foregroundStyle(.gray)
             }
-            .padding(.top, -8) // thanks apple
+            .padding(.top, -8)
         }
         BottomNavigation()
             .environmentObject(app)
     }
     
-//    TotalOffers(amount: app.offers)
     var printOffers: some View {
         Rectangle()
             .foregroundStyle(.gray.opacity(CST.Offers.opacity))
             .frame(height: CST.Offers.height)
             .overlay {
-                TotalOffersIntended(amount: app.offers,
-                                    orderDelay: $app.orderDelay)
+                TotalOffersIntended() // TotalOffers(amount: app.offers)
+                    .environmentObject(app)
                 .font(.system(size: CST.Offers.textSize, weight: .semibold))
             }
     }

@@ -9,7 +9,7 @@ import Foundation
 
 struct SzukajRoot {
     let offers: [Offer] = []
-    let fakeOffersCount = Int.random(in: 100...999999999)
+    var fakeOffersCount = Int.random(in: 100...999999999)
     
     struct Offer {
         let name: String

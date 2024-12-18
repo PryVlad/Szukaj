@@ -12,6 +12,8 @@ class Szukaj: ObservableObject {
     @Published var activeNav = "Start"
     
     var orderDelay: TimeInterval = 0
-    var offers: Int { szukaj.fakeOffersCount }
-    
+    var offers: Int {
+        get { szukaj.fakeOffersCount }
+        set(newValue) { szukaj.fakeOffersCount = newValue }
+    }
 }

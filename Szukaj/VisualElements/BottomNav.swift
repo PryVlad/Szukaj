@@ -8,41 +8,42 @@
 import SwiftUI
 
 struct BottomNavigation: View {
+    @EnvironmentObject var app: Szukaj
+    
     var body: some View {
         HStack(alignment: .bottom, spacing: 0) {
-            BotElement(text: "Start", sysName: "house")
-            BotElement(text: "Noted", sysName: "star.square")
-            BotElement(text: "Konto", sysName: "person.circle")
-            BotElement(text: "Menu", sysName: "list.bullet")
+            ForEach(Szukaj.NavName.allCases) { name in
+                BotElement(name: name)
+            }
         }
         .padding(.top, -8)
     }
     
     struct BotElement: View {
         @EnvironmentObject var app: Szukaj
+        typealias nav = Szukaj.NavName
         
-        let text: String
-        let sysName: String
+        let name: nav
         
         var body: some View {
             Rectangle()
                 .ignoresSafeArea()
                 .frame(height: CST.rectH)
-                .foregroundStyle(app.activeNav == text
+                .foregroundStyle(app.activeNav == name
                                  ? CST.activeColor
                                  : .clear)
                 .overlay(alignment: .bottom) {
                     VStack(spacing: 0) {
-                        Image(systemName: sysName)
-                        Text(text)
+                        Image(systemName: nav.getIcon(name))
+                        Text(nav.getStr(name))
                     }
                     .font(.title2)
-                    .foregroundStyle(app.activeNav == text
+                    .foregroundStyle(app.activeNav == name
                                      ? CST.activeIcon
                                      : .gray)
                 }
                 .onTapGesture {
-                    app.activeNav = text
+                    app.activeNav = name
                 }
         }
     }
@@ -52,8 +53,4 @@ struct BottomNavigation: View {
         static let rectH: CGFloat = 80
         static let activeIcon: Color = .blue.mix(with: .black, by: 0.3)
     }
-}
-
-#Preview {
-    BottomNavigation()
 }

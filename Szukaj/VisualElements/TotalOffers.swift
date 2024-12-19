@@ -48,13 +48,13 @@ struct TotalOffersIntended: View { // TODO: custom transition
     
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(getRNumbers(app.offers).enumerated().reversed(), id: \.offset) { num in
+            ForEach(getRNumbers(app.numOffers).enumerated().reversed(), id: \.offset) { num in
                 Print(digit: num.element)
                     .padding(.trailing, (num.offset)%3 == 0 ? 4 : 0)
             }
             Text("ofert pracy")
         }
-        .onChange(of: app.offers) {
+        .onChange(of: app.numOffers) {
             app.orderDelay = 0
         }
         .onDisappear {

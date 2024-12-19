@@ -10,7 +10,7 @@ import SwiftUI
 struct OfferView: View {
     @State var isNoted = false
     
-    let temp: SzukajRoot.Offer.CV
+    let offer: SzukajRoot.Offer
     
     var body: some View {
         VStack(spacing: 0) {
@@ -26,12 +26,12 @@ struct OfferView: View {
     @ViewBuilder
     private var bot: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if temp != .niewymagane {
+            if offer.cv != .niewymagane {
                 Rectangle().frame(height: 1)
                     .foregroundStyle(Szukaj.color.opacity(0.2))
             }
             Group {
-                if temp == .szybko {
+                if offer.cv == .szybko {
                     Label("szybko", systemImage: "bolt")
                         .foregroundStyle(.gray)
                         .font(.title2).fontWeight(.light)
@@ -46,9 +46,9 @@ struct OfferView: View {
         HStack(alignment: .top, spacing: 0) {
             Rectangle().frame(width: CST.Size.img, height: CST.Size.img)
             VStack(alignment: .leading, spacing: 0) {
-                Text("Company Company Company Company")
+                Text(offer.company)
                     .font(.title2).fontWeight(.semibold)
-                Text("Location")
+                Text(offer.loc)
                     .font(.title3).fontWeight(.light)
                     .padding(.top)
             }
@@ -61,21 +61,42 @@ struct OfferView: View {
     private var top: some View {
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                Spacer().frame(height: CST.Padding.Above.title)
-                Text("Work")
-                    .font(.title2).fontWeight(.bold)
-                    .padding(.bottom, CST.Padding.betweenTitle)
-                Text("ItsEasySure")
-                    .font(.title3).fontWeight(.bold)
-                    .foregroundStyle(.gray)
+                if offer.minSalary == 0 && offer.maxSalary == 0 {
+                    Text(offer.name)
+                        .font(.title2).fontWeight(.bold)
+                } else {
+                    whenSalaryExist
+                }
             }
             .padding()
+            .frame(height: CST.Size.topTextArea)
             Spacer()
             star
         }
     }
     
-    private var star: some View { // NavStack tap maybe broke in future
+    @ViewBuilder
+    private var whenSalaryExist: some View {
+        Spacer().frame(height: CST.Padding.Above.title)
+        Text(offer.name)
+            .font(.title2).fontWeight(.bold)
+            .padding(.bottom, CST.Padding.betweenTitle)
+        salary
+            .font(.title3).fontWeight(.bold)
+            .foregroundStyle(.gray)
+    }
+    
+    private var salary: Text {
+        if offer.minSalary > 0 && offer.maxSalary == 0 {
+            return Text("\(offer.minSalary) - ... zl")
+        }
+        if offer.minSalary == 0 && offer.maxSalary > 0 {
+            return Text("\(offer.maxSalary) zl")
+        }
+        return Text("\(offer.minSalary) - \(offer.maxSalary) zl")
+    }
+    
+    private var star: some View { // NavStack can backfire
         Image(systemName: isNoted ? "star.fill" : "star")
             .resizable()
             .aspectRatio(contentMode: .fit)
@@ -99,6 +120,7 @@ struct OfferView: View {
         struct Size {
             static let img: CGFloat = 100
             static let star: CGFloat = 30
+            static let topTextArea: CGFloat = 90
         }
         struct Padding {
             static let betweenTitle: CGFloat = 4
@@ -118,5 +140,5 @@ struct OfferView: View {
 }
 
 #Preview {
-    OfferView(temp: .szybko)
+    OfferView(offer: SzukajRoot.mockData[1])
 }

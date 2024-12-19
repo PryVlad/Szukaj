@@ -11,41 +11,40 @@ struct SzukajRoot {
     let offers: [Offer] = []
     var fakeOffersCount = Int.random(in: 100...999999999)
     
-    struct Offer {
+    static let mockData: [Offer] = [
+        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location", stan: .init(), minSalary: 0, maxSalary: 123),
+        Offer(name: "Work", company: "Company Company Company", cv: .niewymagane, img: "nil", loc: "Location", stan: .init(), minSalary: 123, maxSalary: 0),
+        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location", stan: .init(), minSalary: 123, maxSalary: 123),
+        Offer(name: "Work", company: "Company Company Company", cv: .niewymagane, img: "nil", loc: "Location", stan: .init(), minSalary: 0, maxSalary: 0),
+        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location", stan: .init(), minSalary: 0, maxSalary: 0)
+    ]
+    
+    enum Fields {
+        case company(String)
+        case cv(Offer.CV)
+        case loc(String)
+        case stan(Set<Offer.poziomStanowiska>)
+        case minSalary(Int)
+        case maxSalary(Int)
+    }
+    
+    struct Offer: Identifiable, Hashable {
         let name: String
+        let company: String
         let cv: CV
         let img: String
         let loc: String // definitely not efficient
-        let cat: CATEGORY
         let stan: Set<poziomStanowiska>
+        let minSalary: Int
+        let maxSalary: Int
+        let id = UUID()
         
-        init(name: String, cv: CV, img: String, loc: String,
-             stan: Set<poziomStanowiska>) {
-            self.name = name
-            self.cv = cv
-            self.img = img
-            self.loc = loc
-            self.cat = Self.setCategory(stan)
-            self.stan = stan
-        }
-        
-        static private func setCategory(_ stan: Set<poziomStanowiska>) -> CATEGORY {
-            if stan.contains(where: {$0 == poziomStanowiska.fizyczny} ) {
-                return CATEGORY.fiz
+        enum CV: Identifiable, Hashable {
+            var id: Self {
+                self
             }
-            if stan.contains(where: {$0 == poziomStanowiska.junior ||
-                $0 == poziomStanowiska.mid || $0 == poziomStanowiska.senior} ) {
-                return CATEGORY.it
-            }
-            return CATEGORY.all
-        }
-        
-        enum CV {
+            
             case niewymagane, dnaTest, szybko
-        }
-        
-        enum CATEGORY {
-            case all, it, fiz
         }
         
         enum poziomStanowiska {

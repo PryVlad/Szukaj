@@ -12,7 +12,7 @@ struct Start: View {
     
     var body: some View {
         ZStack {
-            Rectangle().foregroundStyle(.BG.opacity(CST.Offers.opacity))
+            Rectangle().foregroundStyle(.BG.opacity(CST.OffersCount.opacity))
             ScrollView {
                 VStack {
                     ZStack {
@@ -21,15 +21,31 @@ struct Start: View {
                             .padding(CST.paddingLogo)
                     }
                     printOffers
+                    temp
                 }
                 VStack(spacing: CST.spacingOffer) {
-                    OfferView(temp: .niewymagane)
-                    OfferView(temp: .szybko)
-                    OfferView(temp: .szybko)
-                    OfferView(temp: .niewymagane)
-                    OfferView(temp: .szybko)
+                    ForEach(app.getOffers) { offer in
+                        OfferView(offer: offer)
+                    }
                 }
                 .padding(.top, -8)
+            }
+        }
+    }
+    
+    var temp: some View {
+        Button {
+            withAnimation {
+                if app.activeFilters.isEmpty {
+                    app.activeFilters.append(.cv(.szybko))
+                } else {
+                    app.activeFilters.removeAll()
+                }
+            }
+        } label: {
+            ZStack {
+                Rectangle().foregroundStyle(.white).frame(width: 200, height: 50).border(.black)
+                Label("filter WIP", systemImage: "rectangle.checkered")
             }
         }
     }
@@ -37,11 +53,11 @@ struct Start: View {
     var printOffers: some View {
         Rectangle()
             .foregroundStyle(.clear)
-            .frame(height: CST.Offers.height)
+            .frame(height: CST.OffersCount.height)
             .overlay {
                 TotalOffersIntended() // TotalOffers(amount: app.offers)
                     .environmentObject(app)
-                .font(.system(size: CST.Offers.textSize, weight: .semibold))
+                .font(.system(size: CST.OffersCount.textSize, weight: .semibold))
             }
     }
     
@@ -49,7 +65,7 @@ struct Start: View {
         static let paddingLogo: CGFloat = 10
         static let spacingOffer: CGFloat = 30
         
-        struct Offers {
+        struct OffersCount {
             static let height: CGFloat = 70
             static let textSize: CGFloat = 24
             static let opacity = 0.5

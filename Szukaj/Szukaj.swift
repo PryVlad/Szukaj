@@ -10,14 +10,19 @@ import SwiftUI
 class Szukaj: ObservableObject {
     @Published var szukaj = SzukajRoot()
     @Published var activeNav: NavName = .start
+    @Published var activeFilters: [SzukajRoot.Fields] = [] //[.cv(.szybko)]
     
     var orderDelay: TimeInterval = 0
-    var offers: Int {
+    var numOffers: Int {
         get { szukaj.fakeOffersCount }
         set(newValue) { szukaj.fakeOffersCount = newValue }
     }
-    
     static let color: Color = .blue.mix(with: .black, by: 0.3)
+    
+    var getOffers: [SzukajRoot.Offer] {
+        let base = OfferCVFilter(offerFilter: OfferBaseFilter())
+        return base.filter(offers: SzukajRoot.mockData, by: activeFilters)
+    }
     
     enum NavName: CaseIterable, Identifiable {
         case start, noted, konto, menu

@@ -57,6 +57,9 @@ struct TotalOffersIntended: View { // TODO: custom transition
         .onChange(of: app.offers) {
             app.orderDelay = 0
         }
+        .onDisappear {
+            app.orderDelay = 0
+        }
     }
     
     private func getRNumbers(_ n: Int) -> [Int] {

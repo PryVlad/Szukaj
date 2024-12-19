@@ -39,7 +39,7 @@ struct BottomNavigation: View {
                     }
                     .font(.title2)
                     .foregroundStyle(app.activeNav == name
-                                     ? CST.activeIcon
+                                     ? Szukaj.color
                                      : .gray)
                 }
                 .onTapGesture {
@@ -51,6 +51,5 @@ struct BottomNavigation: View {
     private struct CST {
         static let activeColor: Color = .blue.mix(with: .white, by: 0.6)
         static let rectH: CGFloat = 80
-        static let activeIcon: Color = .blue.mix(with: .black, by: 0.3)
     }
 }

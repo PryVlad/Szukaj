@@ -11,29 +11,32 @@ struct Start: View {
     @EnvironmentObject var app: Szukaj
     
     var body: some View {
-        ScrollView {
-            VStack {
-                Logo("szukaj")
-                    .padding(CST.padding)
-                printOffers
-            }
-            VStack(spacing: 0) {
-                Button {
-                    app.offers-=12345
-                } label: {
-                    Text("minus")
+        ZStack {
+            Rectangle().foregroundStyle(.BG.opacity(CST.Offers.opacity))
+            ScrollView {
+                VStack {
+                    ZStack {
+                        Rectangle().foregroundStyle(.white)
+                        Logo("szukaj")
+                            .padding(CST.paddingLogo)
+                    }
+                    printOffers
                 }
-                Rectangle().frame(height: 500).foregroundStyle(.gray)
-                Rectangle().frame(height: 500).foregroundStyle(.black)
-                Rectangle().frame(height: 500).foregroundStyle(.gray)
+                VStack(spacing: CST.spacingOffer) {
+                    OfferView(temp: .niewymagane)
+                    OfferView(temp: .szybko)
+                    OfferView(temp: .szybko)
+                    OfferView(temp: .niewymagane)
+                    OfferView(temp: .szybko)
+                }
+                .padding(.top, -8)
             }
-            .padding(.top, -8)
         }
     }
     
     var printOffers: some View {
         Rectangle()
-            .foregroundStyle(.gray.opacity(CST.Offers.opacity))
+            .foregroundStyle(.clear)
             .frame(height: CST.Offers.height)
             .overlay {
                 TotalOffersIntended() // TotalOffers(amount: app.offers)
@@ -43,15 +46,13 @@ struct Start: View {
     }
     
     private struct CST {
-        static let padding = 10.0
+        static let paddingLogo: CGFloat = 10
+        static let spacingOffer: CGFloat = 30
+        
         struct Offers {
             static let height: CGFloat = 70
             static let textSize: CGFloat = 24
-            static let opacity = 0.2
+            static let opacity = 0.5
         }
     }
 }
-
-//#Preview {
-//    Start()
-//}

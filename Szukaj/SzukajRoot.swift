@@ -13,13 +13,13 @@ struct SzukajRoot {
     
     struct Offer {
         let name: String
-        let cv: offerCV
+        let cv: CV
         let img: String
         let loc: String // definitely not efficient
-        let cat: offerCategory
+        let cat: CATEGORY
         let stan: Set<poziomStanowiska>
         
-        init(name: String, cv: offerCV, img: String, loc: String,
+        init(name: String, cv: CV, img: String, loc: String,
              stan: Set<poziomStanowiska>) {
             self.name = name
             self.cv = cv
@@ -29,22 +29,22 @@ struct SzukajRoot {
             self.stan = stan
         }
         
-        static private func setCategory(_ stan: Set<poziomStanowiska>) -> offerCategory {
+        static private func setCategory(_ stan: Set<poziomStanowiska>) -> CATEGORY {
             if stan.contains(where: {$0 == poziomStanowiska.fizyczny} ) {
-                return offerCategory.fiz
+                return CATEGORY.fiz
             }
             if stan.contains(where: {$0 == poziomStanowiska.junior ||
                 $0 == poziomStanowiska.mid || $0 == poziomStanowiska.senior} ) {
-                return offerCategory.it
+                return CATEGORY.it
             }
-            return offerCategory.all
+            return CATEGORY.all
         }
         
-        enum offerCV {
-            case niewymagane, dnaTest
+        enum CV {
+            case niewymagane, dnaTest, szybko
         }
         
-        enum offerCategory {
+        enum CATEGORY {
             case all, it, fiz
         }
         

@@ -17,6 +17,8 @@ class Szukaj: ObservableObject {
         set(newValue) { szukaj.fakeOffersCount = newValue }
     }
     
+    static let color: Color = .blue.mix(with: .black, by: 0.3)
+    
     enum NavName: CaseIterable, Identifiable {
         case start, noted, konto, menu
         

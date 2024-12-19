@@ -11,12 +11,20 @@ struct SzukajView: View {
     @ObservedObject var app: Szukaj
     
     var body: some View { // who needs TabView and NavStack?
-        VStack(spacing: 0) {
-            content
-            Spacer()
-            BottomNavigation()
+        ZStack {
+            VStack(spacing: 0) {
+                content
+                Spacer()
+                BottomNavigation()
+            }
+            .environmentObject(app)
+            
+            GeometryReader { reader in
+                Szukaj.color
+                    .frame(height: reader.safeAreaInsets.top, alignment: .top)
+                    .ignoresSafeArea()
+            }
         }
-        .environmentObject(app)
     }
     
     @ViewBuilder

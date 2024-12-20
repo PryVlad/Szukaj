@@ -41,6 +41,16 @@ struct SzukajRoot {
               stan: .init([.MID]), minSalary: 0, maxSalary: 0)
     ]
     
+    static let ConfuciusQuote = [
+        "Better a diamond with a flaw than a CV without.",
+        "I hear, I know. I see, I remember. I do, I szukaj.",
+        "Szukaj the CV, if you would difine the future.",
+        "You cannot open a szukaj without learning something.",
+        "Everyone has CV, but not everyone sees it.",
+        "Szukaj yourself, and others will szukaj you.",
+        "Szukaj a job you love, and you will never have to work a day in your life."
+    ]
+    
     enum Fields {
         case company(String)
         case cv(Offer.CV)
@@ -62,11 +72,11 @@ struct SzukajRoot {
         let id = UUID()
         
         enum CV: Identifiable, Hashable {
+            case niewymagane, dnaTest, szybko
+            
             var id: Self {
                 self
             }
-            
-            case niewymagane, dnaTest, szybko
         }
         
         enum poziomStanowiska {

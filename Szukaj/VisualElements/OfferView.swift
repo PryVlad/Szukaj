@@ -11,6 +11,7 @@ struct OfferView: View {
     @State var isNoted = false
     
     let offer: SzukajRoot.Offer
+    @Environment(\.colorScheme) var scheme
     
     var body: some View {
         VStack(spacing: 0) {
@@ -20,7 +21,7 @@ struct OfferView: View {
                 .padding(.bottom, CST.Padding.Above.line)
             bot
         }
-        .background(Rectangle().foregroundStyle(CST.background))
+        .background(Rectangle().foregroundStyle(bgColor))
     }
     
     @ViewBuilder
@@ -108,14 +109,17 @@ struct OfferView: View {
                     .onTapGesture {
                         isNoted.toggle()
                     }
-                    .foregroundStyle(CST.background)
+                    .foregroundStyle(bgColor)
             )
             .padding(.horizontal, CST.Padding.starHorizontal)
     }
     
+    private var bgColor: Color {
+        scheme == .light ? .white : .black
+    }
+    
     private struct CST {
         static let multStarArea = 1.6
-        static let background: Color = .white
         
         struct Size {
             static let img: CGFloat = 100

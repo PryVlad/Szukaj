@@ -48,7 +48,7 @@ struct TotalOffersIntended: View { // TODO: custom transition
     
     var body: some View {
         HStack(spacing: 0) {
-            Rectangle().foregroundStyle(.clear)
+            Color.clear
                 .overlay(alignment: .trailing) {
                     HStack(spacing: 0) {
                         ForEach(getRNumbers(app.numOffers).enumerated().reversed(),
@@ -58,7 +58,7 @@ struct TotalOffersIntended: View { // TODO: custom transition
                         }
                     }
             }
-            Rectangle().foregroundStyle(.clear)
+            Color.clear
                 .overlay(alignment: .leading) {
                     Text("ofert pracy")
                 }
@@ -99,8 +99,7 @@ struct TotalOffersIntended: View { // TODO: custom transition
         }
         
         private func opacityVal() -> Double {
-            if ch == "O" { return 0 }
-            return 1
+            ch == "O" ? 0 : 1
         }
         
         private func startAnimation() {

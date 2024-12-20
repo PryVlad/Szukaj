@@ -9,33 +9,45 @@ import SwiftUI
 
 struct Start: View {
     @EnvironmentObject var app: Szukaj
+    @Environment(\.colorScheme) var scheme
     
     var body: some View {
         ZStack {
-            Rectangle()
-                .foregroundStyle(.BG.opacity(CST.OffersCount.opacity))
+            Color.BG.opacity(CST.OffersCount.opacity)
                 .ignoresSafeArea()
             ScrollView {
-                VStack {
+                VStack(spacing: 0) {
                     ZStack {
-                        Rectangle().foregroundStyle(.white)
-                            .ignoresSafeArea()
-                        Logo("szukaj")
-                            .padding(CST.paddingLogo)
+                        bgColor.ignoresSafeArea()
+                        Logo("szukaj").padding(CST.paddingLogo)
                     }
-                    printOffers
+                    printOffersNum
                     StartFilterBig()
-                    Text("Oferty dnia")
-                        .padding(.vertical)
                 }
-                VStack(spacing: CST.spacingOffer) {
-                    ForEach(app.getOffers) { offer in
-                        OfferView(offer: offer)
-                    }
+                dayText
+                printOffers
                 }
-                .padding(.top, -8)
             }
         }
+    
+    private var printOffers: some View {
+        VStack(spacing: CST.spacingOffer) {
+            ForEach(app.getOffers) { offer in
+                OfferView(offer: offer)
+            }
+        }
+    }
+    
+    private var dayText: some View {
+        VStack(spacing: 0) {
+            Text("Strefa ofert")
+                .font(.largeTitle).fontWeight(.bold)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text(CST.quote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top)
+        }
+        .padding()
     }
     
 //    var filters: some View {
@@ -55,20 +67,24 @@ struct Start: View {
 //        }
 //    }
     
-    var printOffers: some View {
-        Rectangle()
-            .foregroundStyle(.clear)
+    private var printOffersNum: some View {
+        Color.clear
             .frame(height: CST.OffersCount.height)
             .overlay {
                 TotalOffersIntended() // TotalOffers(amount: app.offers)
-                    .environmentObject(app)
-                .font(.system(size: CST.OffersCount.textSize, weight: .semibold))
+                .font(.system(size: CST.OffersCount.textSize,
+                              weight: .semibold))
             }
     }
     
+    private var bgColor: Color {
+        scheme == .light ? .white : .black
+    }
+    
     private struct CST {
-        static let paddingLogo: CGFloat = 10
+        static let paddingLogo: CGFloat = 14
         static let spacingOffer: CGFloat = 30
+        static let quote = SzukajRoot.ConfuciusQuote.randomElement()!
         
         struct OffersCount {
             static let height: CGFloat = 70

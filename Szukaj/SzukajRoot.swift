@@ -9,14 +9,36 @@ import Foundation
 
 struct SzukajRoot {
     let offers: [Offer] = []
-    var fakeOffersCount = Int.random(in: 100...999999999)
+    var fakeOffersCount = Self.fakeNumbers[0]
+    
+    static let fakeNumbers: [Int] = [
+        Int.random(in: 21000...999999999),
+        Int.random(in: 5000...7000),
+        Int.random(in: 7000...14000)
+    ]
+    
+    static func getIT() -> Int {
+        fakeNumbers[1]
+    }
+    static func getFiz() -> Int {
+        fakeNumbers[2]
+    }
+    static func getAll() -> Int {
+        fakeNumbers[0]
+    }
+    
     
     static let mockData: [Offer] = [
-        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location", stan: .init(), minSalary: 0, maxSalary: 123),
-        Offer(name: "Work", company: "Company Company Company", cv: .niewymagane, img: "nil", loc: "Location", stan: .init(), minSalary: 123, maxSalary: 0),
-        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location", stan: .init(), minSalary: 123, maxSalary: 123),
-        Offer(name: "Work", company: "Company Company Company", cv: .niewymagane, img: "nil", loc: "Location", stan: .init(), minSalary: 0, maxSalary: 0),
-        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location", stan: .init(), minSalary: 0, maxSalary: 0)
+        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location",
+              stan: .init([.fizyczny]), minSalary: 0, maxSalary: 123),
+        Offer(name: "Work", company: "Company Company Company", cv: .niewymagane, img: "nil", loc: "Location",
+              stan: .init(), minSalary: 123, maxSalary: 0),
+        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location",
+              stan: .init(), minSalary: 123, maxSalary: 123),
+        Offer(name: "Work", company: "Company Company Company", cv: .niewymagane, img: "nil", loc: "Location",
+              stan: .init(), minSalary: 0, maxSalary: 0),
+        Offer(name: "Work", company: "Company Company Company", cv: .szybko, img: "nil", loc: "Location",
+              stan: .init([.MID]), minSalary: 0, maxSalary: 0)
     ]
     
     enum Fields {
@@ -48,7 +70,7 @@ struct SzukajRoot {
         }
         
         enum poziomStanowiska {
-            case praktykant, asystent, junior, mid, senior, menedzer, fizyczny, robota
+            case praktykant, asystent, junior, MID, senior, menedzer, fizyczny, robota
         }
     }
 }

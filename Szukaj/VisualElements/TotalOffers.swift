@@ -48,11 +48,20 @@ struct TotalOffersIntended: View { // TODO: custom transition
     
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(getRNumbers(app.numOffers).enumerated().reversed(), id: \.offset) { num in
-                Print(digit: num.element)
-                    .padding(.trailing, (num.offset)%3 == 0 ? 4 : 0)
+            Rectangle().foregroundStyle(.clear)
+                .overlay(alignment: .trailing) {
+                    HStack(spacing: 0) {
+                        ForEach(getRNumbers(app.numOffers).enumerated().reversed(),
+                                id: \.offset) { num in
+                            Print(digit: num.element)
+                                .padding(.trailing, (num.offset)%3 == 0 ? 4 : 0)
+                        }
+                    }
             }
-            Text("ofert pracy")
+            Rectangle().foregroundStyle(.clear)
+                .overlay(alignment: .leading) {
+                    Text("ofert pracy")
+                }
         }
         .onChange(of: app.numOffers) {
             app.orderDelay = 0
@@ -118,8 +127,8 @@ struct TotalOffersIntended: View { // TODO: custom transition
     }
     
     private struct Const {
-        static let rng = 0.1...0.3
-        static let fromLeftFlipSpeed = 0.05
+        static let rng = 0.1...0.2
+        static let fromLeftFlipSpeed = 0.02
     }
 }
 

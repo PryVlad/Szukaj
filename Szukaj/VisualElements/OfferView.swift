@@ -20,7 +20,7 @@ struct OfferView: View {
                 .padding(.bottom, CST.Padding.Above.line)
             bot
         }
-        .background(CST.background)
+        .background(Rectangle().foregroundStyle(CST.background))
     }
     
     @ViewBuilder

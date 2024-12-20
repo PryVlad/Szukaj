@@ -12,16 +12,21 @@ struct Start: View {
     
     var body: some View {
         ZStack {
-            Rectangle().foregroundStyle(.BG.opacity(CST.OffersCount.opacity))
+            Rectangle()
+                .foregroundStyle(.BG.opacity(CST.OffersCount.opacity))
+                .ignoresSafeArea()
             ScrollView {
                 VStack {
                     ZStack {
                         Rectangle().foregroundStyle(.white)
+                            .ignoresSafeArea()
                         Logo("szukaj")
                             .padding(CST.paddingLogo)
                     }
                     printOffers
-                    temp
+                    StartFilterBig()
+                    Text("Oferty dnia")
+                        .padding(.vertical)
                 }
                 VStack(spacing: CST.spacingOffer) {
                     ForEach(app.getOffers) { offer in
@@ -33,22 +38,22 @@ struct Start: View {
         }
     }
     
-    var temp: some View {
-        Button {
-            withAnimation {
-                if app.activeFilters.isEmpty {
-                    app.activeFilters.append(.cv(.szybko))
-                } else {
-                    app.activeFilters.removeAll()
-                }
-            }
-        } label: {
-            ZStack {
-                Rectangle().foregroundStyle(.white).frame(width: 200, height: 50).border(.black)
-                Label("filter WIP", systemImage: "rectangle.checkered")
-            }
-        }
-    }
+//    var filters: some View {
+//        Button {
+//            withAnimation {
+//                if app.activeFilters.isEmpty {
+//                    app.activeFilters.append(.cv(.szybko))
+//                } else {
+//                    app.activeFilters.removeAll()
+//                }
+//            }
+//        } label: {
+//            ZStack {
+//                Rectangle().foregroundStyle(.white).frame(width: 200, height: 50).border(.black)
+//                Label("filter WIP", systemImage: "rectangle.checkered")
+//            }
+//        }
+//    }
     
     var printOffers: some View {
         Rectangle()

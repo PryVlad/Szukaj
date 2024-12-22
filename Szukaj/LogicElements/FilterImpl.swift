@@ -7,8 +7,6 @@
 
 import Foundation
 
-// i have no idea how and why it works.
-
 protocol FilterStrategy {
     func filter(
         offers: [SzukajRoot.Offer], by field: [SzukajRoot.Fields]
@@ -42,6 +40,17 @@ final class Filter {
             return offers.filter { !CVfilter.contains($0.cv) }
         }
     }
+    
+    final class STAN: FilterStrategy {
+        func filter(offers: [offer], by field: [SzukajRoot.Fields]) -> [offer] {            
+            for val in field {
+                if case let .stan(set) = val {
+                    return offers.filter { $0.stan.isSubset(of: set) }
+                }
+            }
+            return offers
+        }
+    }
 }
     
     // MARK: part 2
@@ -61,9 +70,9 @@ class OfferBaseFilter: OfferFilter {
 }
 
 class OfferFilterDecorator: OfferFilter {
-    typealias offer = SzukajRoot.Offer
-    
     private let offerFilter: OfferFilter
+    
+    typealias offer = SzukajRoot.Offer
     
     init(offerFilter: OfferFilter) {
         self.offerFilter = offerFilter
@@ -79,6 +88,15 @@ class OfferFilterDecorator: OfferFilter {
 final class OfferCVFilter: OfferFilterDecorator {
     override func filter(offers: [offer], by field: [SzukajRoot.Fields]) -> [offer] {
         let filter = Filter(strategy: Filter.CV())
+        let appliedFilterResult = super.filter(offers: offers, by: field)
+        let filteredOffers = filter.applyFilter(to: appliedFilterResult, withField: field)
+        return filteredOffers
+    }
+}
+
+final class OfferSTANFilter: OfferFilterDecorator {
+    override func filter(offers: [offer], by field: [SzukajRoot.Fields]) -> [offer] {
+        let filter = Filter(strategy: Filter.STAN())
         let appliedFilterResult = super.filter(offers: offers, by: field)
         let filteredOffers = filter.applyFilter(to: appliedFilterResult, withField: field)
         return filteredOffers

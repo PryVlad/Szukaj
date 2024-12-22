@@ -45,6 +45,7 @@ struct OfferView: View {
     
     private var mid: some View {
         HStack(alignment: .top, spacing: 0) {
+            //let img = AsyncImage(url: URL)
             Rectangle().frame(width: CST.Size.img, height: CST.Size.img)
             VStack(alignment: .leading, spacing: 0) {
                 Text(offer.company)

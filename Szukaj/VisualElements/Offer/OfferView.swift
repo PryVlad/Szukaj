@@ -9,9 +9,10 @@ import SwiftUI
 
 struct OfferView: View {
     @State var isNoted = false
+    @Environment(\.colorScheme) var scheme
+    @EnvironmentObject var app: Szukaj
     
     let offer: SzukajRoot.Offer
-    @Environment(\.colorScheme) var scheme
     
     var body: some View {
         VStack(spacing: 0) {
@@ -22,6 +23,9 @@ struct OfferView: View {
             bot
         }
         .background(Rectangle().foregroundStyle(bgColor))
+        .onAppear {
+            visibleStar()
+        }
     }
     
     @ViewBuilder
@@ -98,6 +102,16 @@ struct OfferView: View {
         return Text("\(offer.minSalary) - \(offer.maxSalary) zl")
     }
     
+    private func visibleStar() {
+        // array of bools for all visible and access by index = alternative
+        if app.visibleStars < app.noted.count {
+            if app.noted.contains(where: {$0.id == offer.id} ) {
+                isNoted = true
+                app.visibleStars+=1
+            }
+        }
+    }
+    
     private var star: some View { // NavStack can backfire
         Image(systemName: isNoted ? "star.fill" : "star")
             .resizable()
@@ -108,11 +122,20 @@ struct OfferView: View {
                 Rectangle().frame(width: CST.Size.star*CST.multStarArea,
                                   height: CST.Size.star*CST.multStarArea)
                     .onTapGesture {
-                        isNoted.toggle()
+                        starTap()
                     }
                     .foregroundStyle(bgColor)
             )
             .padding(.horizontal, CST.Padding.starHorizontal)
+    }
+    
+    private func starTap() {
+        isNoted.toggle()
+        if !app.noted.contains(where: {$0 == offer} ) {
+            app.noted.append(offer)
+        } else {
+            app.noted.removeAll(where: {$0 == offer} )
+        }
     }
     
     private var bgColor: Color {
@@ -144,6 +167,6 @@ struct OfferView: View {
     }
 }
 
-#Preview {
-    OfferView(offer: SzukajRoot.mockData[1])
-}
+//#Preview {
+//    OfferView(offer: SzukajRoot.mockData[1])
+//}

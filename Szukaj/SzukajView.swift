@@ -14,10 +14,11 @@ struct SzukajView: View {
         ZStack {
             VStack(spacing: 0) {
                 content
-                Spacer()
-                BottomNavigation()
+                    .background(Color.BG.opacity(0.5))
+                    .overlay(alignment: .bottom) {
+                        BottomNavigation()
+                    }
             }
-            .environmentObject(app)
             
             GeometryReader { reader in
                 Szukaj.color
@@ -25,6 +26,7 @@ struct SzukajView: View {
                     .ignoresSafeArea()
             }
         }
+        .environmentObject(app)
     }
     
     @ViewBuilder

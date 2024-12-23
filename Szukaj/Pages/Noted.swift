@@ -9,8 +9,9 @@ import SwiftUI
 
 struct Noted: View {
     var body: some View {
-        VStack {
-            Text("Hello, World!")
+        ScrollView {
+            Logo.standart(bg: .white)
+            StackOffers(source: .noted)
         }
     }
 }

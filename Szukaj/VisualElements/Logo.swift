@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct Logo: View {
+    @Environment(\.colorScheme) var scheme
+    
     let text: String
     let color: Color
     
@@ -21,5 +23,12 @@ struct Logo: View {
             .foregroundStyle(.white)
             .background(Capsule().foregroundStyle(color))
             .font(.title)
+    }
+    
+    static func standart(bg: Color) -> some View {
+        ZStack {
+            bg.ignoresSafeArea()
+            Self("szukaj").padding(14)
+        }
     }
 }

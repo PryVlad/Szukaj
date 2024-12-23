@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct BottomNavigation: View {
-    @EnvironmentObject var app: Szukaj
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 0) {
@@ -21,6 +20,7 @@ struct BottomNavigation: View {
     
     struct BotElement: View {
         @EnvironmentObject var app: Szukaj
+        @Environment(\.colorScheme) var scheme
         typealias nav = Szukaj.NavName
         
         let name: nav
@@ -31,7 +31,7 @@ struct BottomNavigation: View {
                 .frame(height: CST.rectH)
                 .foregroundStyle(app.activeNav == name
                                  ? CST.activeColor
-                                 : .clear)
+                                 : bgColor)
                 .overlay(alignment: .bottom) {
                     VStack(spacing: 0) {
                         Image(systemName: nav.getIcon(name))
@@ -45,6 +45,10 @@ struct BottomNavigation: View {
                 .onTapGesture {
                     app.activeNav = name
                 }
+        }
+        
+        private var bgColor: Color {
+            scheme == .light ? .white : .black
         }
     }
     

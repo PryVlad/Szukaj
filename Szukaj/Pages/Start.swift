@@ -8,38 +8,17 @@
 import SwiftUI
 
 struct Start: View {
-    @EnvironmentObject var app: Szukaj
     @Environment(\.colorScheme) var scheme
     
     var body: some View {
-        ZStack {
-            Color.BG.opacity(CST.NumOffers.opacity)
-                .ignoresSafeArea()
-            ScrollView {
-                VStack(spacing: 0) {
-                    ZStack {
-                        bgColor.ignoresSafeArea()
-                        Logo(CST.logoText).padding(CST.paddingLogo)
-                    }
-                    printNumOffers
-                    StartFilterBig()
-                }
-                dayText
-                printOffers
-                }
+        ScrollView {
+            VStack(spacing: 0) {
+                Logo.standart(bg: bgColor)
+                printNumOffers
+                StartFilterBig()
             }
-        }
-    
-    private var printOffers: some View {
-        LazyVStack(spacing: CST.spacingOffer) {
-            ForEach(app.getOffers) { offer in
-                OfferView(offer: offer)
-            }
-            Color.clear
-                .frame(height: 1)
-                .onAppear {
-                    app.reachBottom()
-                }
+            dayText
+            StackOffers(source: .all)
         }
     }
     
@@ -70,11 +49,8 @@ struct Start: View {
     }
     
     private struct CST {
-        static let paddingLogo: CGFloat = 14
-        static let spacingOffer: CGFloat = 30
         static let quote = Szukaj.ConfuciusQuote.randomElement()!
         static let dayText = "Strefa ofert"
-        static let logoText = "szukaj"
         
         struct NumOffers {
             static let height: CGFloat = 70

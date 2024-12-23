@@ -14,6 +14,9 @@ class Szukaj: ObservableObject {
     
     var orderDelay: TimeInterval = 0
     var numOffers: Int = fakeNumbers[0]
+    
+    var noted: [SzukajRoot.Offer] = [] // idk if Int pointers are better
+    var visibleStars = 0
 
     var getOffers: [SzukajRoot.Offer] {
         let cv = OfferCVFilter(offerFilter: OfferBaseFilter())
@@ -26,12 +29,12 @@ class Szukaj: ObservableObject {
         let addCount = 10
         if szukaj.offers.count < limit {
             for _ in 0..<addCount {
-                szukaj.offers.append(createRandomOffer())
+                szukaj.offers.append(Self.createRandomOffer())
             }
         }
     }
     
-    private func createRandomOffer() -> SzukajRoot.Offer {
+    static private func createRandomOffer() -> SzukajRoot.Offer {
         let cv: [SzukajRoot.Offer.CV] = [.niewymagane, .szybko]
         let stan: [SzukajRoot.Offer.poziomStanowiska] = [
             .MID, .menedzer, .robota, .fizyczny
@@ -69,10 +72,10 @@ class Szukaj: ObservableObject {
         }
         
         static private let lib = [
-            NavName.start : ["Start", "house"],
-            NavName.noted : ["Noted", "star.square"],
-            NavName.konto : ["Konto", "person.circle"],
-            NavName.menu : ["Menu", "list.bullet"]
+            Self.start : ["Start", "house"],
+            Self.noted : ["Noted", "star.square"],
+            Self.konto : ["Konto", "person.circle"],
+            Self.menu : ["Menu", "list.bullet"]
         ]
         
         static func getStr(_ nav: NavName) -> String {

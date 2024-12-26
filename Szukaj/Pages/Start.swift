@@ -8,19 +8,36 @@
 import SwiftUI
 
 struct Start: View {
-    @Environment(\.colorScheme) var scheme
+    @Environment(\.colorScheme) private var scheme
+    @EnvironmentObject private var app: Szukaj
     
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                Logo.standart(bg: bgColor)
-                printNumOffers
+                if !app.isSearchText {
+                    Logo.standart(bg: bgColor)
+                    printNumOffers
+                }
                 StartFilterBig()
             }
-            dayText
-            StackOffers(source: .all)
+            if !app.isSearchText {
+                dayText
+                StackOffers(source: .all)
+            }
         }
     }
+    
+//    var body: some View {
+//        ScrollView {
+//            VStack(spacing: 0) {
+//                Logo.standart(bg: bgColor)
+//                printNumOffers
+//                StartFilterBig()
+//            }
+//            dayText
+//            StackOffers(source: .all)
+//        }
+//    }
     
     private var dayText: some View {
         VStack(spacing: 0) {

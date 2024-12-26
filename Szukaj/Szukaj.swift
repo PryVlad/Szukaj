@@ -10,21 +10,28 @@ import SwiftUI
 class Szukaj: ObservableObject {
     @Published private var szukaj = SzukajRoot()
     @Published var activeNav: NavName = .start
-    @Published var activeFilters: [SzukajRoot.Fields] = []
     
+    /* Top filters */
+    @Published var activeFilters: [SzukajRoot.Fields] = []
+    @Published var isOpenFullSearch = false
+    @Published var isSearchText = false
+    
+    /* Total Offers */
     var orderDelay: TimeInterval = 0
     var numOffers: Int = fakeNumbers[0]
     
-    var noted: [SzukajRoot.Offer] = [] // idk if Int pointers are better
+    /* Noted */
+    @Published var noted: [SzukajRoot.Offer] = [] // [Int] pointers ?
     var visibleStars = 0
 
+    /* Offers scroll */
     var getOffers: [SzukajRoot.Offer] {
         let cv = OfferCVFilter(offerFilter: OfferBaseFilter())
         let stan = OfferSTANFilter(offerFilter: cv)
         return stan.filter(offers: szukaj.offers, by: activeFilters)
     }
     
-    func reachBottom() { // LoadingView, await
+    func loadMore() { // LoadingView, await
         let limit = 100
         let addCount = 10
         if szukaj.offers.count < limit {

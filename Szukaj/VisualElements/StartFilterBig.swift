@@ -10,49 +10,83 @@ import SwiftUI
 struct StartFilterBig: View {
     @State private var selected: TabElement.Name = .empty
     @EnvironmentObject private var app: Szukaj
-    @Environment(\.colorScheme) var scheme
-    @Namespace var namespace
+    @Environment(\.colorScheme) private var scheme
+    @Namespace private var tabs
+    @Namespace private var search
     
     var body: some View {
         VStack(spacing: 0) {
-            scroll
-            searchDecoy
-                .padding(.vertical)
-            buttons
+            if app.isSearchText {
+                searchDecoy(namespase: search, id: "box")
+                    .padding(.vertical)
+                Color.clear
+                    .aspectRatio(1/1.38, contentMode: .fill)
+                topButton
+                    .padding(.bottom)
+                    .matchedGeometryEffect(id: "press", in: search)
+            } else {
+                scroll
+                searchDecoy(namespase: search, id: "box")
+                    .padding(.vertical)
+                Group {
+                    topButton
+                        .padding(.top)
+                        .matchedGeometryEffect(id: "press", in: search)
+                    botButton
+                        .padding(.bottom)
+                }
                 .padding(.bottom)
+            }
         }
         .background(bgColor)
     }
     
-    private var buttons: some View {
-        Group {
-            createButton(border: .clear, fill: Szukaj.color,
-                         action: {print("top")} )
-            .overlay {
-                Text(CST.Button.strTop)
-                    .font(.title2).fontWeight(.bold)
-                    .foregroundStyle(.white)
-            }
-            .padding(.top)
-            createButton(border: Szukaj.color, fill: .clear,
-                         action: {print("bot")} )
-            .overlay {
-                Text(CST.Button.strBot)
-                    .font(.title2).fontWeight(.semibold)
-                    .foregroundStyle(Szukaj.color)
-            }
-            .padding(.bottom)
+//    var body: some View {
+//        VStack(spacing: 0) {
+//            scroll
+//            searchDecoy
+//                .padding(.vertical)
+//            Group {
+//                topButton
+//                .padding(.top)
+//                botButton
+//                .padding(.bottom)
+//            }
+//                .padding(.bottom)
+//        }
+//        .background(bgColor)
+//    }
+    
+    private var botButton: some View {
+        createButton(border: Szukaj.color, fill: bgColor,
+                     action: { app.isOpenFullSearch = true } )
+        .overlay {
+            Text(CST.Button.strBot)
+                .font(.title2).fontWeight(.semibold)
+                .foregroundStyle(Szukaj.color)
         }
     }
     
-    private func createButton(border: Color, fill: Color, action: @escaping ()->Void) -> some View {
+    private var topButton: some View {
+        createButton(border: .clear, fill: Szukaj.color,
+                     action: { withAnimation(.bouncy) { app.isSearchText.toggle() } } )
+        .overlay {
+            Text(CST.Button.strTop)
+                .font(.title2).fontWeight(.bold)
+                .foregroundStyle(.white)
+        }
+    }
+    
+    private func createButton(
+        border: Color, fill: Color, action: @escaping ()->Void
+    ) -> some View {
         Button {
             action()
         } label: {
             HStack(spacing: 0) {
                 Spacer().frame(width: CST.Button.offset)
                 RoundedRectangle(cornerRadius: CST.Button.radius)
-                    .strokeBorder(border)
+                    .stroke(border)
                     .fill(fill)
                     .frame(height: CST.Button.height)
                 Spacer().frame(width: CST.Button.offset)
@@ -61,14 +95,18 @@ struct StartFilterBig: View {
         .buttonStyle(.plain)
     }
     
-    private func buttonStyle(border: Color, fill: Color) -> some View {
+    private func searchDecoy(namespase: Namespace.ID, id: String) -> some View {
         HStack(spacing: 0) {
-            Spacer().frame(width: CST.Button.offset)
-            RoundedRectangle(cornerRadius: CST.Button.radius)
-                .strokeBorder(border)
-                .fill(fill)
-                .frame(height: CST.Button.height)
-            Spacer().frame(width: CST.Button.offset)
+            Spacer().frame(width: 30)
+            RoundedRectangle(cornerRadius: 10)
+                .strokeBorder(.gray)
+                .frame(height: 50)
+                .foregroundStyle(.white)
+                .overlay(alignment: .leading) {
+                    Text("WIP")
+                }
+                .matchedGeometryEffect(id: id, in: tabs)
+            Spacer().frame(width: 30)
         }
     }
     
@@ -90,12 +128,11 @@ struct StartFilterBig: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .center, spacing: 0) {
                 ForEach(CST.elements, id: \.text) { elem in
-                    TabView(tab: elem, selected: $selected, namespace: namespace)
+                    TabView(tab: elem,
+                            selected: $selected,
+                            namespace: tabs)
                         .onTapGesture {
-                            withAnimation(.spring) {
-                                selected = selected == elem.id ? .empty : elem.id
-                                updateBigFilter()
-                            }
+                            selectTab(elem.id)
                         }
                 }
             }
@@ -104,22 +141,34 @@ struct StartFilterBig: View {
         .padding(.leading, CST.spacing)
     }
     
+    private func selectTab(_ id: TabElement.Name) {
+        withAnimation(.spring) {
+            selected = selected == id ? .empty : id
+            updateBigFilter()
+        }
+    }
+    
     private func updateBigFilter() {
         app.activeFilters.removeAll()
         
         switch selected {
         case .fiz:
             app.numOffers = TabElement.get(.fiz)
-            app.activeFilters.append(SzukajRoot.Fields.stan(.init([.fizyczny])))
+            app.activeFilters.append(
+                SzukajRoot.Fields.stan(.init([.fizyczny]))
+            )
         case .it:
             app.numOffers = TabElement.get(.it)
-            app.activeFilters.append(SzukajRoot.Fields.stan(.init([.junior, .MID, .senior])))
+            app.activeFilters.append(
+                SzukajRoot.Fields.stan(.init([.junior, .MID, .senior]))
+            )
         default:
             app.numOffers = TabElement.get(.empty)
         }
     }
     
-    static private func drawRect(height: CGFloat, opacity: CGFloat) -> some View {
+    static private func drawRect(height: CGFloat, opacity: CGFloat
+    ) -> some View {
         Rectangle()
             .frame(height: height)
             .foregroundStyle(Szukaj.color.opacity(opacity))
@@ -139,7 +188,9 @@ struct StartFilterBig: View {
                 Spacer().frame(width: CST.spacing)
                 Label(tab.text, systemImage: tab.sysImg)
                     .font(.title3).fontWeight(.regular)
-                    .foregroundStyle(tab.id == selected ? Szukaj.color : .gray)
+                    .foregroundStyle(tab.id == selected
+                                     ? Szukaj.color
+                                     : .gray)
                 Spacer().frame(width: CST.spacing)
             }
             .padding(.top)

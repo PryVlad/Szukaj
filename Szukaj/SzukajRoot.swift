@@ -61,7 +61,14 @@ struct SzukajRoot {
         }
         
         enum poziomStanowiska {
-            case praktykant, asystent, junior, MID, senior, menedzer, fizyczny, robota
+            case praktykant,
+                 asystent,
+                 junior,
+                 MID,
+                 senior,
+                 menedzer,
+                 fizyczny,
+                 robota
         }
     }
 }

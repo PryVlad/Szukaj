@@ -8,18 +8,16 @@
 import SwiftUI
 
 struct OfferView: View {
-    @State var isNoted = false
-    @Environment(\.colorScheme) var scheme
-    @EnvironmentObject var app: Szukaj
+    @State private var isNoted = false
+    @Environment(\.colorScheme) private var scheme
+    @EnvironmentObject private var app: Szukaj
     
     let offer: SzukajRoot.Offer
     
     var body: some View {
         VStack(spacing: 0) {
-            top
-                .padding(.bottom, CST.Padding.Above.img)
-            mid
-                .padding(.bottom, CST.Padding.Above.line)
+            top.padding(.bottom, CST.Padding.Above.img)
+            mid.padding(.bottom, CST.Padding.Above.line)
             bot
         }
         .background(Rectangle().foregroundStyle(bgColor))
@@ -133,8 +131,12 @@ struct OfferView: View {
         isNoted.toggle()
         if !app.noted.contains(where: {$0 == offer} ) {
             app.noted.append(offer)
+            app.visibleStars += 1
         } else {
-            app.noted.removeAll(where: {$0 == offer} )
+            withAnimation(.spring) {
+                app.noted.removeAll(where: {$0 == offer} )
+            }
+            app.visibleStars -= 1
         }
     }
     

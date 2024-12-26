@@ -18,9 +18,9 @@ struct BottomNavigation: View {
         .padding(.top, -8)
     }
     
-    struct BotElement: View {
-        @EnvironmentObject var app: Szukaj
-        @Environment(\.colorScheme) var scheme
+    private struct BotElement: View {
+        @EnvironmentObject private var app: Szukaj
+        @Environment(\.colorScheme) private var scheme
         typealias nav = Szukaj.NavName
         
         let name: nav

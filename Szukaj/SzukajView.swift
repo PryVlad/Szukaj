@@ -9,15 +9,19 @@ import SwiftUI
 
 struct SzukajView: View {
     @ObservedObject var app: Szukaj
+    private let bgOpacity: CGFloat = 0.5
     
     var body: some View { // who needs TabView and NavStack?
         ZStack {
             VStack(spacing: 0) {
                 content
-                    .background(Color.BG.opacity(0.5))
-                    .overlay(alignment: .bottom) {
-                        BottomNavigation()
+                    .background(Color.BG.opacity(bgOpacity))
+                    .sheet(isPresented: $app.isOpenFullSearch) {
+                        FullFilterView()
                     }
+            }
+            .overlay(alignment: .bottom) {
+                BottomNavigation()
             }
             
             GeometryReader { reader in

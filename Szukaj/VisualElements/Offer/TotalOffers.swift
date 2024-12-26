@@ -44,23 +44,26 @@ struct TotalOffers: View { // 9 update limit?
 
 
 struct TotalOffersIntended: View { // TODO: custom transition
-    @EnvironmentObject var app: Szukaj
+    @EnvironmentObject private var app: Szukaj
+    private let text = "ofert pracy"
     
     var body: some View {
         HStack(spacing: 0) {
             Color.clear
                 .overlay(alignment: .trailing) {
                     HStack(spacing: 0) {
-                        ForEach(getRNumbers(app.numOffers).enumerated().reversed(),
+                        ForEach(getRNumbers(app.numOffers)
+                            .enumerated().reversed(),
                                 id: \.offset) { num in
                             Print(digit: num.element)
-                                .padding(.trailing, (num.offset)%3 == 0 ? 4 : 0)
+                                .padding(.trailing,
+                                         offset(num.offset))
                         }
                     }
             }
             Color.clear
                 .overlay(alignment: .leading) {
-                    Text("ofert pracy")
+                    Text(text)
                 }
         }
         .onChange(of: app.numOffers) {
@@ -69,6 +72,10 @@ struct TotalOffersIntended: View { // TODO: custom transition
         .onDisappear {
             app.orderDelay = 0
         }
+    }
+    
+    private func offset(_ i: Int) -> CGFloat {
+        i%3 == 0 ? 4 : 0
     }
     
     private func getRNumbers(_ n: Int) -> [Int] {
@@ -83,8 +90,8 @@ struct TotalOffersIntended: View { // TODO: custom transition
     }
     
     private struct Print: View {
-        @EnvironmentObject var app: Szukaj
-        @State var ch: Character = "O"
+        @EnvironmentObject private var app: Szukaj
+        @State private var ch: Character = "O"
         let digit: Int
         
         var body: some View {
@@ -118,14 +125,14 @@ struct TotalOffersIntended: View { // TODO: custom transition
             for i in stride(from: from, to: to, by: by) {
                 withAnimation(.linear.delay(localDelay)) {
                     ch = Character(String(i))
-                    localDelay+=TimeInterval.random(in: Const.rng)
+                    localDelay+=TimeInterval.random(in: CST.rng)
                 }
             }
-            app.orderDelay += Const.fromLeftFlipSpeed
+            app.orderDelay += CST.fromLeftFlipSpeed
         }
     }
     
-    private struct Const {
+    private struct CST {
         static let rng = 0.1...0.2
         static let fromLeftFlipSpeed = 0.02
     }

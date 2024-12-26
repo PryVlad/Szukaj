@@ -18,23 +18,15 @@ struct StackOffers: View {
             ForEach(get(source)) { offer in
                 OfferView(offer: offer)
             }
-            if app.noted.isEmpty && source == .noted {
-                emptyCase
-            }
             Color.clear
                 .frame(height: 1)
                 .onAppear {
-                    app.reachBottom()
+                    app.loadMore()
                 }
         }
         .onAppear {
             app.visibleStars = 0
         }
-    }
-    
-    private var emptyCase: some View {
-        Text("Zero!?")
-            .font(.headline)
     }
     
     private func get(_ array: Source) -> [SzukajRoot.Offer] {

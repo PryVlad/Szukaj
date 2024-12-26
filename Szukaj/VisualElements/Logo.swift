@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Logo: View {
-    @Environment(\.colorScheme) var scheme
+    @Environment(\.colorScheme) private var scheme
     
     let text: String
     let color: Color

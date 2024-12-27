@@ -14,13 +14,15 @@ struct StartFilterBig: View {
     @Namespace private var tabs
     @Namespace private var search
     
+    private let temp = 1/1.38
+    
     var body: some View {
         VStack(spacing: 0) {
             if app.isSearchText {
                 searchDecoy(namespase: search, id: "box")
                     .padding(.vertical)
                 Color.clear
-                    .aspectRatio(1/1.38, contentMode: .fill)
+                    .aspectRatio(temp, contentMode: .fill)
                 topButton
                     .padding(.bottom)
                     .matchedGeometryEffect(id: "press", in: search)
@@ -58,41 +60,27 @@ struct StartFilterBig: View {
 //    }
     
     private var botButton: some View {
-        createButton(border: Szukaj.color, fill: bgColor,
+        DefaultButton(border: Szukaj.color, fill: bgColor,
                      action: { app.isOpenFullSearch = true } )
         .overlay {
-            Text(CST.Button.strBot)
+            HStack(spacing: 0) {
+                Text(CST.Button.strBot)
+                Image(systemName: "arrowshape.right")
+            }
                 .font(.title2).fontWeight(.semibold)
                 .foregroundStyle(Szukaj.color)
         }
     }
     
     private var topButton: some View {
-        createButton(border: .clear, fill: Szukaj.color,
-                     action: { withAnimation(.bouncy) { app.isSearchText.toggle() } } )
+        DefaultButton(border: .clear, fill: Szukaj.color, action: {
+            withAnimation(.bouncy) { app.isSearchText.toggle() }
+        })
         .overlay {
             Text(CST.Button.strTop)
                 .font(.title2).fontWeight(.bold)
                 .foregroundStyle(.white)
         }
-    }
-    
-    private func createButton(
-        border: Color, fill: Color, action: @escaping ()->Void
-    ) -> some View {
-        Button {
-            action()
-        } label: {
-            HStack(spacing: 0) {
-                Spacer().frame(width: CST.Button.offset)
-                RoundedRectangle(cornerRadius: CST.Button.radius)
-                    .stroke(border)
-                    .fill(fill)
-                    .frame(height: CST.Button.height)
-                Spacer().frame(width: CST.Button.offset)
-            }
-        }
-        .buttonStyle(.plain)
     }
     
     private func searchDecoy(namespase: Namespace.ID, id: String) -> some View {
@@ -110,19 +98,19 @@ struct StartFilterBig: View {
         }
     }
     
-    private var searchDecoy: some View {
-        HStack(spacing: 0) {
-            Spacer().frame(width: 30)
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(.gray)
-                .frame(height: 50)
-                .foregroundStyle(.white)
-                .overlay(alignment: .leading) {
-                    Text("WIP")
-                }
-            Spacer().frame(width: 30)
-        }
-    }
+//    private var searchDecoy: some View {
+//        HStack(spacing: 0) {
+//            Spacer().frame(width: 30)
+//            RoundedRectangle(cornerRadius: 10)
+//                .strokeBorder(.gray)
+//                .frame(height: 50)
+//                .foregroundStyle(.white)
+//                .overlay(alignment: .leading) {
+//                    Text("WIP")
+//                }
+//            Spacer().frame(width: 30)
+//        }
+//    }
     
     private var scroll: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -245,11 +233,11 @@ struct StartFilterBig: View {
             static let radius: CGFloat = 40
             static let height: CGFloat = 50
             static let strTop = "🎲  Try to find"
-            static let strBot = "More options  ➡️"
+            static let strBot = "More options  "
         }
     }
 }
 
-#Preview {
-    StartFilterBig()
-}
+//#Preview {
+//    StartFilterBig()
+//}

@@ -60,7 +60,7 @@ struct SzukajRoot {
             }
         }
         
-        enum poziomStanowiska {
+        enum poziomStanowiska: Identifiable, CaseIterable {
             case praktykant,
                  asystent,
                  junior,
@@ -69,6 +69,10 @@ struct SzukajRoot {
                  menedzer,
                  fizyczny,
                  robota
+            
+            var id: Self {
+                self
+            }
         }
     }
 }

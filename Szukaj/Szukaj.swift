@@ -54,6 +54,7 @@ class Szukaj: ObservableObject {
     }
     
     static let color: Color = .blue.mix(with: .indigo, by: 0.5)
+    static let colorBG: Color = .BG.opacity(0.5)
     
     static let fakeNumbers: [Int] = [
         Int.random(in: 21000...999999999),

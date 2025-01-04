@@ -10,15 +10,12 @@ import SwiftUI
 class Szukaj: ObservableObject {
     @Published private var szukaj = SzukajRoot()
     @Published var activeNav: NavName = .start
-    
-    /* Top filters */
-    @Published var activeFilters: [SzukajRoot.Fields] = []
-    @Published var isOpenFullSearch = false
-    @Published var isSearchText = false
+    @Published var filter = FilterModel()
     
     /* Total Offers */
     var orderDelay: TimeInterval = 0
     var numOffers: Int = fakeNumbers[0]
+    var allowRoll: Bool = true
     
     /* Noted */
     @Published var noted: [SzukajRoot.Offer] = [] // [Int] pointers ?
@@ -28,7 +25,8 @@ class Szukaj: ObservableObject {
     var getOffers: [SzukajRoot.Offer] {
         let cv = OfferCVFilter(offerFilter: OfferBaseFilter())
         let stan = OfferSTANFilter(offerFilter: cv)
-        return stan.filter(offers: szukaj.offers, by: activeFilters)
+//        return stan.filter(offers: szukaj.offers, by: activeFilters)
+        return stan.filter(offers: szukaj.offers, by: filter.active)
     }
     
     func loadMore() { // LoadingView, await
@@ -43,12 +41,12 @@ class Szukaj: ObservableObject {
     
     static private func createRandomOffer() -> SzukajRoot.Offer {
         let cv: [SzukajRoot.Offer.CV] = [.niewymagane, .szybko]
-        let stan: [SzukajRoot.Offer.poziomStanowiska] = [
-            .MID, .menedzer, .robota, .fizyczny
-        ]
+        let stan = SzukajRoot.Offer.poziomStanowiska.allCases
+        
+        let sr = stan.randomElement()!
         return SzukajRoot.Offer(name: "Work", company: "Company", cv: cv.randomElement()!,
-                                img: URL(filePath: "img"), loc: "Location",
-                                stan: [stan.randomElement()!],
+                                img: URL(filePath: "img"), loc: sr.rawValue,
+                                stan: .init([sr]),
                                 minSalary: Int.random(in: 0...20),
                                 maxSalary: Int.random(in: 21...999))
     }

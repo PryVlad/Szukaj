@@ -14,30 +14,21 @@ struct Start: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                if !app.isSearchText {
+                if !app.filter.isTapTextSearch {
                     Logo.standart(bg: bgColor)
                     printNumOffers
                 }
                 StartFilterBig()
             }
-            if !app.isSearchText {
+            if !app.filter.isTapTextSearch {
                 dayText
                 StackOffers(source: .all)
             }
         }
+        .onDisappear {
+            app.allowRoll = true
+        }
     }
-    
-//    var body: some View {
-//        ScrollView {
-//            VStack(spacing: 0) {
-//                Logo.standart(bg: bgColor)
-//                printNumOffers
-//                StartFilterBig()
-//            }
-//            dayText
-//            StackOffers(source: .all)
-//        }
-//    }
     
     private var dayText: some View {
         VStack(spacing: 0) {

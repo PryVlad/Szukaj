@@ -89,21 +89,6 @@ final class DisplayLink {
     }
 }
 
-extension CGRect {
-    var center: CGPoint {
-        CGPoint(x: midX, y: midY)
-    }
-}
-
-extension Color {
-    static func random() -> Color {
-        let red = Double.random(in: 0...1)
-        let green = Double.random(in: 0...1)
-        let blue = Double.random(in: 0...1)
-        return Color(red: red, green: green, blue: blue)
-    }
-}
-
 //#Preview {
 //    Noted()
 //}

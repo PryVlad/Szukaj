@@ -9,14 +9,16 @@ import SwiftUI
 
 struct SzukajView: View {
     @ObservedObject var app: Szukaj
+    @State private var isFilterApply = false
     
     var body: some View { // who needs TabView and NavStack?
         VStack(spacing: 0) {
             content
                 .background(Szukaj.colorBG)
-                .sheet(isPresented: $app.isOpenFullSearch) {
-                    FullFilterView()
+                .sheet(isPresented: $app.filter.isOpenFullSearch) {
+                    FullFilterView(filterState: $isFilterApply)
                 }
+            BottomNavigation()
         }
         .overlay {
             GeometryReader { reader in
@@ -24,8 +26,6 @@ struct SzukajView: View {
                     .frame(height: reader.safeAreaInsets.top, alignment: .top)
                     .ignoresSafeArea()
             }
-            BottomNavigation()
-                .frame(maxHeight: .infinity, alignment: .bottom)
         }
         .environmentObject(app)
     }

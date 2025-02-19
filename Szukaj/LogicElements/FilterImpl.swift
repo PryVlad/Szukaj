@@ -44,8 +44,12 @@ final class Filter {
     final class STAN: FilterStrategy {
         func filter(offers: [offer], by field: Set<SzukajRoot.Fields>) -> [offer] {
             for val in field {
-                if case let .stan(set) = val {
-                    return offers.filter { $0.stan.value.isSubset(of: set) }
+                if case let .stan(unpack) = val {
+                    if unpack.wrapper.storage.values.isEmpty {
+                        return offers
+                    }
+                    return offers.filter { $0.stan.wrapper.storage.values.isSubset(
+                        of: unpack.wrapper.storage.values) }
                 }
             }
             return offers
@@ -105,173 +109,90 @@ final class OfferSTANFilter: OfferFilterDecorator {
 
     // MARK: Part 3 ...
 
-protocol FieldElement { var rawValue: String { get } }
-protocol ConfirmField: FieldElement, Hashable, CaseIterable {
-    static var all: [FieldElement] { get }
+protocol FieldElement: RawRepresentable<String>,Hashable,Equatable,
+                       CaseIterable where AllCases == Array<Self> {
+    func isFound(in source: Szukaj) -> Bool
 }
 
-protocol FieldStorage {
-    var allCases: [FieldElement] { get }
-    func add(_ val: FieldElement)
-    func remove(_ val: FieldElement)
-    func contains(_ val: FieldElement) -> Bool
-    var getValues: [FieldElement] { get }
+protocol ConfirmFEValues: Hashable&Equatable {
+    associatedtype FE: FieldElement
+    var values: Set<FE> { get set }
 }
-protocol ConfirmFieldStorage: FieldStorage,Equatable,Hashable,Sequence {}
 
-final class WrapperField<T: ConfirmField>: ConfirmFieldStorage {
-    var value: Set<T>
-    var allCases: [FieldElement] {
-        T.all
-    }
-    
-    var getValues: [FieldElement] {
-        Array(value)
-    }
-    
-    init() { value = .init() }
-    
-    init(_ value: [T]) {
-        self.value = .init(value)
-    }
-    
-    func add(_ val: FieldElement) {
-        value.insert(val as! T)
-    }
-    
-    func remove(_ val: FieldElement) {
-        value.remove(val as! T)
-    }
-    
-    func contains(_ val: FieldElement) -> Bool {
-        value.contains(where: {$0 == val as! T})
-    }
-    
-    func makeIterator() -> Set<T>.Iterator {
-        value.makeIterator()
-    }
-    
-    static func == (lhs: WrapperField, rhs: WrapperField) -> Bool {
-        lhs === rhs
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(value)
+protocol ConfirmFEWrapper: Hashable&Equatable {
+    associatedtype VAL: ConfirmFEValues
+    var storage: VAL { get }
+    var allCases: VAL.FE.AllCases { get }
+    mutating func add(_ elem: VAL.FE)
+    mutating func remove(_ elem: VAL.FE)
+}
+
+protocol ConfirmFEStorage: Hashable&Equatable {
+    associatedtype WRAP: ConfirmFEWrapper
+    var wrapper: WRAP { get set }
+    func update(_ source: Szukaj)
+}
+
+struct FEStorage {
+    struct Stan: ConfirmFEStorage {
+        typealias STAN = SzukajRoot.Offer.poziomStanowiska
+        
+        var wrapper = ConfirmFE.Wrap(ConfirmFE.Val<STAN>([]))
+        
+        init() {}
+        
+        init(_ values: Set<STAN>) {
+            wrapper.storage.values = values
+        }
+        
+        func update(_ source: Szukaj) {
+            source.filter.active = [.stan(.init(wrapper.storage.values))]
+        }
     }
 }
 
-//final class Wrapper {
-//    final class Stan: SelectableRequired {
-//        typealias VType = SzukajRoot.Offer.poziomStanowiska
-//        
-//        var value: Set<VType> // can be private
-//        var allCases: [FieldElement] {
-//            VType.allCases
-//        }
-//        
-//        init() { value = .init() }
-//        
-//        init(_ value: [VType]) {
-//            self.value = .init(value)
-//        }
-//        
-//        func add(_ val: FieldElement) {
-//            value.insert(val as! Wrapper.Stan.VType)
-//        }
-//        
-//        func remove(_ val: FieldElement) {
-//            value.remove(val as! Wrapper.Stan.VType)
-//        }
-//        
-//        func contains(_ val: FieldElement) -> Bool {
-//            value.contains(where: {$0 == val as! Wrapper.Stan.VType})
-//        }
-//        
-//        func makeIterator() -> Set<VType>.Iterator {
-//            value.makeIterator()
-//        }
-//        
-//        static func == (lhs: Wrapper.Stan, rhs: Wrapper.Stan) -> Bool {
-//            lhs === rhs
-//        }
-//        
-//        func hash(into hasher: inout Hasher) {
-//            hasher.combine(value)
-//        }
-//    }
-//}
+struct ConfirmFE {
+    struct Wrap<T: ConfirmFEValues>: ConfirmFEWrapper {
+        var storage: T
 
-
-//final class Field: Selectable, Hashable, Equatable {
-//    var value: [Selectable]
-//    
-//    init(value: [Selectable] ) {
-//        self.value = value
-//    }
-//    
-//    static func == (lhs: Field, rhs: Field) -> Bool {
-//        lhs == rhs
-//    }
-//    
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(10)
-//    }
-//}
-
-
-//protocol Selectable {
-//    associatedtype T
-//}
-//
-//struct WrapperSet<T: RawRepresentable & Hashable> {
-//    var value: Set<T>
-//}
-//
-//final class FieldSet<V: Selectable & RawRepresentable & Hashable>: Selectable, Equatable, Hashable {
-//    typealias T = V
-//    
-//    var wrapper: WrapperSet<V>
-//    
-//    init(_ wrapper: WrapperSet<V>) {
-//        self.wrapper = wrapper
-//    }
-//    
-//    static func == (lhs: FieldSet<V>, rhs: FieldSet<V>) -> Bool {
-//        lhs == rhs
-//    }
-//    
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(wrapper.value.hashValue)
-//    }
-//}
-
-//struct Field<E: RawRepresentable & Hashable & Selectable>: Selectable, Equatable, Hashable {
-//    typealias T = E
-//    var value: E
-//    
-//    init(_ value: E) {
-//        self.value = value
-//    }
-//}
-
-//protocol Selectable: Identifiable, Hashable, RawRepresentable,
-//                        CaseIterable where AllCases == Array<Self> {
-//    associatedtype T
-//    var rawValue: String { get }
-//}
-//
-//final class FieldWrapper<T: Selectable>: Hashable, Equatable {
-//    var value: T
-//    
-//    init(_ value: T) {
-//        self.value = value
-//    }
-//    
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(value)
-//    }
-//    
-//    static func == (lhs: FieldWrapper<T>, rhs: FieldWrapper<T>) -> Bool {
-//        lhs.value.rawValue == rhs.value.rawValue
-//    }
-//}
+        init(_ storage: T) {
+            self.storage = storage
+        }
+        
+        var allCases: Array<T.FE> {
+            T.FE.allCases
+        }
+        
+        mutating func add(_ elem: T.FE) {
+            storage.values.insert(elem)
+        }
+        
+        mutating func remove(_ elem: T.FE) {
+            storage.values.remove(elem)
+        }
+        
+        static func == (lhs: ConfirmFE.Wrap<T>, rhs: ConfirmFE.Wrap<T>) -> Bool {
+            lhs.storage == rhs.storage
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(storage.values)
+        }
+    }
+    
+    class Val<E: FieldElement>: ConfirmFEValues {
+        var values: Set<E>
+        
+        init(_ values: Set<E>) {
+            self.values = values
+        }
+        
+        static func == (lhs: ConfirmFE.Val<E>, rhs: ConfirmFE.Val<E>) -> Bool {
+            lhs.values == rhs.values
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(values)
+        }
+    }
+}

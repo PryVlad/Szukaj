@@ -7,6 +7,19 @@
 
 import SwiftUI
 
+extension SzukajRoot.Offer.poziomStanowiska {
+    func isFound(in source: Szukaj) -> Bool {
+        for i in source.filter.active {
+            if case let .stan(wrapper) = i {
+                if wrapper.wrapper.storage.values.contains(self) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+}
+
 extension CGRect {
     var center: CGPoint {
         CGPoint(x: midX, y: midY)
@@ -27,9 +40,4 @@ extension AnyTransition {
         .asymmetric(insertion: .push(from: reversed! ? .bottom : .top),
                     removal: .push(from: reversed! ? .top : .bottom))
     }
-}
-
-protocol sliderEnum: Identifiable, Equatable, CaseIterable where AllCases == Array<Self> {
-    var text: String { get }
-    var sysImg: String { get }
 }

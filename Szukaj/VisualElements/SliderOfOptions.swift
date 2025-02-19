@@ -8,29 +8,23 @@
 import SwiftUI
 
 struct SliderOfOptions<T: sliderEnum>: View {
-    @EnvironmentObject private var app: Szukaj
-    
-    @Binding var isHighlightOn: Bool
-    @Binding var enumValNow: T
+    let isHighlightOn: Bool
+    let enumValNow: T
     let namespace: Namespace.ID
-    let tapFunc: () -> Void
+    let tapFunc: (_ enumCase: T) -> Void
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .center, spacing: 0) {
                 ForEach(T.allCases) { elem in
-                    TabView(activeTab: $app.filter.bigSelectedEnumValue,
-                                selfTab: elem,
-                                namespace: namespace,
-                                visible: $isHighlightOn.wrappedValue)
+                    TabView(activeTab: enumValNow,
+                            selfTab: elem,
+                            namespace: namespace,
+                            visible: isHighlightOn)
                     .onTapGesture {
-                        if $enumValNow.wrappedValue == elem {
-                            isHighlightOn.toggle()
-                        } else {
-                            isHighlightOn = true
+                        withAnimation(.spring) {
+                            tapFunc(elem)
                         }
-                        enumValNow = elem
-                        tapFunc()
                     }
                 }
             }
@@ -38,7 +32,8 @@ struct SliderOfOptions<T: sliderEnum>: View {
         }
     }
     
-    static private func drawRect(height: CGFloat, opacity: CGFloat
+    static private func drawRect(
+        height: CGFloat, opacity: CGFloat
     ) -> some View {
         Rectangle()
             .frame(height: height)
@@ -46,7 +41,7 @@ struct SliderOfOptions<T: sliderEnum>: View {
     }
     
     private struct TabView<ENUM: sliderEnum>: View {
-        @Binding var activeTab: ENUM
+        let activeTab: ENUM
         let selfTab: T
         let namespace: Namespace.ID
         let visible: Bool
@@ -56,16 +51,15 @@ struct SliderOfOptions<T: sliderEnum>: View {
                 Spacer().frame(width: CST.spacing)
                 Label(selfTab.text, systemImage: selfTab.sysImg)
                     .font(.title3).fontWeight(.regular)
-                    .foregroundStyle(visible && selfTab.text == activeTab.text
-                                     ? Szukaj.color
-                                     : .gray)
+                    .foregroundStyle(tabColor)
                 Spacer().frame(width: CST.spacing)
             }
             .padding(.top)
             .overlay(alignment: .bottom) {
                 if visible && selfTab.text == activeTab.text {
-                    SliderOfOptions.drawRect(height: CST.activeLineSize,
-                                  opacity: 1)
+                    SliderOfOptions.drawRect(
+                        height: CST.activeLineSize,
+                        opacity: 1)
                     .offset(y: CST.offsetUnderline)
                         .matchedGeometryEffect(id: "underline",
                                                in: namespace.self,
@@ -77,10 +71,16 @@ struct SliderOfOptions<T: sliderEnum>: View {
             .animation(.spring, value: self.activeTab)
         }
         
-        private struct CST {
-            static var offsetUnderline: CGFloat { 14 }
-            static var spacing: CGFloat { 24 }
-            static var activeLineSize: CGFloat { 2 }
+        private var tabColor: Color {
+            visible && selfTab.text == activeTab.text
+                             ? Szukaj.color
+                             : .gray
         }
     }
+}
+
+fileprivate struct CST {
+    static let offsetUnderline: CGFloat = 14
+    static let spacing: CGFloat = 24
+    static let activeLineSize: CGFloat = 2
 }

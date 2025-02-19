@@ -26,7 +26,7 @@ struct Start: View {
             }
         }
         .onDisappear {
-            app.allowRoll = true
+            app.allowTotalOffersRoll = true
         }
     }
     

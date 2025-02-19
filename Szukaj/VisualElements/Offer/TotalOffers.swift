@@ -98,7 +98,7 @@ struct TotalOffersIntended: View { // TODO: custom transition
             Text("\(ch)")
                 .opacity(opacityVal())
                 .onAppear {
-                    if app.allowRoll {
+                    if app.allowTotalOffersRoll {
                         startAnimation()
                     } else {
                         ch = Character(String(digit))

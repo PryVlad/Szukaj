@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct FullFilterView: View {
-    typealias stan = SzukajRoot.Offer.poziomStanowiska
-//    @State private var isButtonPressed = false
+    typealias STAN = SzukajRoot.Offer.poziomStanowiska
     @EnvironmentObject private var app: Szukaj
-    @Binding var isButtonPressed: Bool
     
-    private var chance: Double = 0
+    @Binding var isButtonPressed: Bool
+    private var chance: Double
     
     init(filterState: Binding<Bool>) {
         _isButtonPressed = filterState
@@ -23,12 +22,13 @@ struct FullFilterView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                SelectSection<stan>(button: $isButtonPressed,
-                                    label: "Poziom stanowiska",
-                                    sysImg: "cellularbars")
+                FFSelectSection(accumulator: FEStorage.Stan(),
+                              isTapButton: $isButtonPressed,
+                              label: "Poziom stanowiska",
+                              sysImg: "cellularbars")
                 Spacer()
             }
-            .padding(.horizontal, CST.Padding.selectionH)
+            .padding(.horizontal, CST.paddingSelectionH)
             searchButton
         }
         .onDisappear {
@@ -59,13 +59,7 @@ struct FullFilterView: View {
     }
     
     private struct CST {
-        static let labelRectSpacingH: CGFloat = 6
-        
-        struct Padding {
-            static let header: CGFloat = 12
-            static let element: CGFloat = 10
-            static let selectionH: CGFloat = 10
-        }
+        static let paddingSelectionH: CGFloat = 10
         
         struct Button {
             static let spacing: CGFloat = 10
@@ -76,89 +70,6 @@ struct FullFilterView: View {
             }
         }
     }
-    
-    private struct SelectSection<T: ConfirmField>: View {
-        @EnvironmentObject private var app: Szukaj
-        @State private var isHidden = false
-        
-        @State var field: FieldStorage = WrapperField<T>()
-        @Binding var button: Bool
-        
-        let label: String
-        let sysImg: String
-        
-        var body: some View {
-            topLabel(label, sysImg: sysImg)
-                .background(background)
-                .padding(.bottom, isHidden ? 0 : CST.Padding.header)
-                .onChange(of: button) {
-                    if button {
-                        compareTypesAddFilter()
-                    }
-                }
-            VStack(spacing: 0) {
-                if !isHidden {
-                    VStack(spacing: 0) {
-                        ForEach(field.allCases, id: \.rawValue) { val in
-                            FFRowView(accum: $field, elem: val)
-                                .padding([.horizontal, .bottom], CST.Padding.element)
-                        }
-                    }
-                } else {
-                    Color.clear.frame(height: 1)
-                }
-            }
-            .transition(.standartPush())
-            .clipped()
-        }
-        
-        private func compareTypesAddFilter() {
-            var exist = false
-            
-            if type(of: T.self) == type(of: SzukajRoot.Offer.poziomStanowiska.self) {
-                let temp = field as! WrapperField<SzukajRoot.Offer.poziomStanowiska>
-                
-//                for loop in app.activeFilters {
-                for loop in app.filter.active {
-                    if case let .stan(wrapperField) = loop {
-                        wrapperField.value.formSymmetricDifference(temp.value)
-                        exist.toggle()
-                        if wrapperField.value.isEmpty {
-                            app.filter.active.remove(.stan(wrapperField))
-                        }
-                    }
-                }
-                if !exist {
-                    app.filter.active.insert(SzukajRoot.Fields.stan(temp))
-                }
-            }
-        }
-        
-        private func topLabel(_ text: String, sysImg: String) -> some View {
-            HStack(spacing: 0) {
-                Label(text, systemImage: sysImg)
-                    .font(.title2).fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                Image(systemName: isHidden ? "chevron.down" : "chevron.up")
-                    .padding()
-            }
-        }
-        
-        private var background: some View {
-            HStack {
-                Spacer().frame(width: CST.labelRectSpacingH)
-                RoundedRectangle(cornerRadius: 8)
-                    .foregroundStyle(Szukaj.colorBG)
-                Spacer().frame(width: CST.labelRectSpacingH)
-            }
-            .onTapGesture {
-                withAnimation(.spring) {
-                    isHidden.toggle()
-                }
-            }
-        }
-    }//SelectSection
 }
 
 

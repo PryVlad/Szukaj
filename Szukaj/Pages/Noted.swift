@@ -20,7 +20,7 @@ struct Noted: View {
             Logo.standart(bg: scheme == .light ? .white : .black)
                 .padding(.bottom, 30)
             StackOffers(source: .noted)
-                .padding(.top, -8)
+                //.padding(.top, -8)
         }
         .background(
             VStack {
@@ -49,7 +49,7 @@ struct Noted: View {
                             color = .random()
                         }
                         
-                        if position.y + 32*2.6 >= geometry.frame(in: .local).height || position.y <= 32*2.6 {
+                        if position.y + 32*0.6 >= geometry.frame(in: .local).height || position.y <= 32*2.4 {
                             velocity.dy *= -1
                             color = .random()
                         }

@@ -14,8 +14,19 @@ class Szukaj: ObservableObject {
     
     /* Total Offers */
     var orderDelay: TimeInterval = 0
-    var numOffers: Int = fakeNumbers[0]
-    var allowRoll: Bool = true
+    var numOffers: Int {
+        if filter.isBigFilterActiveTab {
+            switch filter.bigSelectedEnumValue {
+            case .fiz:
+                return Self.fakeNumbers[2]
+            case .it:
+                return Self.fakeNumbers[1]
+            }
+        } else {
+            return Self.fakeNumbers[0]
+        }
+    }
+    var allowTotalOffersRoll: Bool = true
     
     /* Noted */
     @Published var noted: [SzukajRoot.Offer] = [] // [Int] pointers ?
@@ -25,7 +36,6 @@ class Szukaj: ObservableObject {
     var getOffers: [SzukajRoot.Offer] {
         let cv = OfferCVFilter(offerFilter: OfferBaseFilter())
         let stan = OfferSTANFilter(offerFilter: cv)
-//        return stan.filter(offers: szukaj.offers, by: activeFilters)
         return stan.filter(offers: szukaj.offers, by: filter.active)
     }
     

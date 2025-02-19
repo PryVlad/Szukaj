@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct FFRowView: View {
+struct FFRowView<T: ConfirmFEStorage>: View {
     @EnvironmentObject private var app: Szukaj
     @State var isSelected = false
 
-    @Binding var accum: FieldStorage
-    let elem: FieldElement
+    @Binding var accum: T
+    let elem: T.WRAP.VAL.FE
     
     var body: some View {
         HStack(spacing: 0) {
@@ -23,10 +23,13 @@ struct FFRowView: View {
             Spacer()
         }
         .onTapGesture {
-            tap
+            addToAccAndToggle
         }
         .onAppear {
-            appear
+            if elem.isFound(in: app) {
+                isSelected = true
+                accum.wrapper.add(elem)
+            }
         }
     }
     
@@ -46,32 +49,21 @@ struct FFRowView: View {
         }
     }
     
-    private var tap: Void {
+    private var addToAccAndToggle: Void {
         isSelected.toggle()
-        if accum.contains(elem) {
-            accum.remove(elem)
+
+        if isSelected {
+            accum.wrapper.add(elem)
         } else {
-            accum.add(elem)
+            accum.wrapper.remove(elem)
         }
     }
-    
-    private var appear: Void {
-        for i in app.filter.active {
-            if case let .stan(wrapper) = i {
-                if wrapper.value.contains(where: {
-                    $0.rawValue == elem.rawValue })
-                {
-                    isSelected = true
-                }
-            }
-        }
-    }
-    
-    private struct CST {
-        struct cBox {
-            static let size: CGFloat = 22
-            static let lineWidth: CGFloat = 2
-            static let padding: CGFloat = 12
-        }
+}
+
+fileprivate struct CST {
+    struct cBox {
+        static let size: CGFloat = 22
+        static let lineWidth: CGFloat = 2
+        static let padding: CGFloat = 12
     }
 }

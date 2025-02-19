@@ -15,7 +15,6 @@ struct BottomNavigation: View {
                 BotElement(name: name)
             }
         }
-        .padding(.top, -8)
     }
     
     private struct BotElement: View {

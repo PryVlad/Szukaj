@@ -10,7 +10,7 @@ import SwiftUI
 struct BottomNavigation: View {
     
     var body: some View {
-        HStack(alignment: .bottom, spacing: 0) {
+        HStack(spacing: 0) {
             ForEach(Szukaj.NavName.allCases) { name in
                 BotElement(name: name)
             }

@@ -21,6 +21,7 @@ struct FullFilterView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            Spacer().frame(height: CST.Button.spacing)
             ScrollView {
                 FFSelectSection(accumulator: FEStorage.Stan(),
                               isTapButton: $isButtonPressed,
@@ -30,6 +31,7 @@ struct FullFilterView: View {
             }
             .padding(.horizontal, CST.paddingSelectionH)
             searchButton
+            Spacer().frame(height: CST.Button.spacing)
         }
         .onDisappear {
             isButtonPressed = false

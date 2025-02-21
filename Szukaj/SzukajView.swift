@@ -18,7 +18,9 @@ struct SzukajView: View {
                 .sheet(isPresented: $app.filter.isOpenFullSearch) {
                     FullFilterView(filterState: $isFilterApply)
                 }
-            BottomNavigation()
+            if !app.filter.isTapTextSearch {
+                BottomNavigation()
+            }
         }
         .overlay {
             GeometryReader { reader in

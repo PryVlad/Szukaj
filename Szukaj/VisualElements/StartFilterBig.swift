@@ -13,22 +13,25 @@ struct StartFilterBig: View {
     @Namespace private var tabs
     @Namespace private var search
     
-    private let temp = 1/1.38
+    private let temp = CST.Rect.h*3.8
     
     var body: some View {
         VStack(spacing: 0) {
             if app.filter.isTapTextSearch {
-                searchDecoy(namespase: search, id: "box")
+                Image(systemName: "xmark")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding() // [.horizontal, .top]
+                filterByText(namespase: search, id: "box")
                     .padding(.vertical)
                 Color.clear
-                    .aspectRatio(temp, contentMode: .fill)
+                    .frame(height: temp)
                 topButton
                     .padding(.bottom)
                     .matchedGeometryEffect(id: "press", in: search)
             } else {
-                scroll
+                scrollTabs
                     .transition(.standartPush())
-                searchDecoy(namespase: search, id: "box")
+                filterByText(namespase: search, id: "box")
                     .padding(.vertical)
                 Group {
                     topButton
@@ -42,6 +45,14 @@ struct StartFilterBig: View {
             }
         }
         .background(bgColor)
+        .onTapGesture { focusDisable() }
+    }
+    
+    private func focusDisable() {
+        withAnimation(.bouncy) {
+            app.filter.isTapTextSearch = false
+            focus = false
+        }
     }
     
     private var botButton: some View {
@@ -61,10 +72,7 @@ struct StartFilterBig: View {
     
     private var topButton: some View {
         DefaultButton(border: .clear, fill: Szukaj.color, action: {
-            withAnimation(.bouncy) {
-                app.filter.isTapTextSearch.toggle()
-                app.allowTotalOffersRoll = false
-            }
+            // send to $app.filter.textInput
         })
         .overlay {
             Text(CST.Button.strTop)
@@ -73,30 +81,47 @@ struct StartFilterBig: View {
         }
     }
     
-    private func searchDecoy(
+    @FocusState private var focus: Bool
+    @State private var tempUserInput = ""
+    
+    private func filterByText(
         namespase: Namespace.ID, id: String
     ) -> some View {
         HStack(spacing: 0) {
-            Spacer().frame(width: 30)
-            RoundedRectangle(cornerRadius: 10)
+            Spacer().frame(width: CST.Spacing.standart)
+            RoundedRectangle(cornerRadius: CST.Rect.cornerR)
                 .strokeBorder(.gray)
-                .frame(height: 50)
+                .frame(height: CST.Rect.h)
                 .foregroundStyle(.white)
                 .overlay(alignment: .leading) {
-                    Text("WIP")
+                    TextField(" Type here", text: $tempUserInput)
+                        .padding(.horizontal, CST.paddingH)
+                        .focused($focus)
                 }
                 .matchedGeometryEffect(id: id, in: tabs)
-            Spacer().frame(width: 30)
+                .onChange(of: focus) { focusStateChange() }
+            Spacer().frame(width: CST.Spacing.standart)
+        }
+    }
+    
+    private func focusStateChange() {
+        if focus && !app.filter.isTapTextSearch {
+            withAnimation(.bouncy) {
+                app.filter.isTapTextSearch = true
+                app.allowTotalOffersRoll = false
+            }
+        } else if app.filter.isTapTextSearch {
+            focus = true
         }
     }
         
-    private var scroll: some View {
+    private var scrollTabs: some View {
         SliderOfOptions(isHighlightOn: app.filter.isBigFilterActiveTab,
                         enumValNow: app.filter.bigSelectedEnumValue,
                         namespace: tabs,
                         tapFunc: { enumCase in app.filter.updateBigFilter(enumCase)
         })
-        .padding(.leading, CST.spacingScroll)
+        .padding(.leading, CST.Spacing.scroll)
     }
     
     private var bgColor: Color {
@@ -104,12 +129,17 @@ struct StartFilterBig: View {
     }
     
     private struct CST {
-        static let spacingScroll: CGFloat = 24
-
+        static let paddingH: CGFloat = 10
+        
+        struct Rect {
+            static let h: CGFloat = 50
+            static let cornerR: CGFloat = 50
+        }
+        struct Spacing {
+            static let scroll: CGFloat = 24
+            static let standart: CGFloat = 30
+        }
         struct Button {
-            static let offset: CGFloat = 30
-            static let radius: CGFloat = 40
-            static let height: CGFloat = 50
             static let strTop = "🎲  Try to find"
             static let strBot = "More options  "
         }

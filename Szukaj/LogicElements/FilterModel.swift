@@ -14,6 +14,8 @@ struct FilterModel {
         didSet {
             if let temp = bigCasesCheck {
                 selectTab(temp)
+            } else {
+                isBigFilterActiveTab = false
             }
         }
     }
@@ -24,7 +26,9 @@ struct FilterModel {
     var bigSelectedEnumValue: bigSliderCases = .it
     var isBigFilterActiveTab = false
     
-    private let itCases: Set<STAN> = [.junior, .MID, .senior]
+    var textInput = ""
+    
+    private static let itCases: Set<STAN> = [.junior, .MID, .senior]
     
     
     mutating func updateBigFilter(_ enumCase: FilterModel.bigSliderCases) {
@@ -40,7 +44,7 @@ struct FilterModel {
             case .fiz:
                 active = [.stan(.init( [.fizyczny] ))]
             case .it:
-                active = [.stan(.init( itCases ))]
+                active = [.stan(.init( Self.itCases ))]
             }
         }
     }
@@ -50,7 +54,7 @@ struct FilterModel {
         if active == [.stan(.init( [.fizyczny] ))] {
             return .fiz
         }
-        if active == [.stan(.init( itCases ))] {
+        if active == [.stan(.init( Self.itCases ))] {
             return .it
         }
         return nil

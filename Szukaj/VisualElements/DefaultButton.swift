@@ -17,15 +17,21 @@ struct DefaultButton: View {
             action()
         } label: {
             HStack(spacing: 0) {
-                Spacer().frame(width: 30)
-                RoundedRectangle(cornerRadius: 40)
+                Spacer().frame(width: CST.offset)
+                RoundedRectangle(cornerRadius: CST.radius)
                     .stroke(border)
                     .fill(fill)
-                    .frame(height: 50)
-                Spacer().frame(width: 30)
+                    .frame(height: CST.height)
+                Spacer().frame(width: CST.offset)
             }
         }
         .buttonStyle(.plain)
+    }
+    
+    private struct CST {
+        static let offset: CGFloat = 30
+        static let radius: CGFloat = 40
+        static let height: CGFloat = 50
     }
 }
 

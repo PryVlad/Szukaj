@@ -14,13 +14,13 @@ struct Start: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                if !app.filter.isTapTextSearch {
+                if app.filter.isTapTextSearch == false {
                     Logo.standart(bg: bgColor)
                     printNumOffers
                 }
                 StartFilterBig()
             }
-            if !app.filter.isTapTextSearch {
+            if app.filter.isTapTextSearch == false {
                 dayText
                 StackOffers(source: .all)
             }

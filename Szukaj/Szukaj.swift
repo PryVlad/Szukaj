@@ -16,7 +16,7 @@ class Szukaj: ObservableObject {
     var orderDelay: TimeInterval = 0
     var numOffers: Int {
         if filter.isBigFilterActiveTab {
-            switch filter.bigSelectedEnumValue {
+            switch filter.bigSliderSelected {
             case .fiz:
                 return Self.fakeNumbers[2]
             case .it:

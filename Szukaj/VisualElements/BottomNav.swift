@@ -29,7 +29,7 @@ struct BottomNavigation: View {
                 .ignoresSafeArea()
                 .frame(height: CST.rectH)
                 .foregroundStyle(app.activeNav == name
-                                 ? CST.activeColor
+                                 ? .blue06
                                  : bgColor)
                 .overlay(alignment: .bottom) {
                     VStack(spacing: 0) {
@@ -52,7 +52,6 @@ struct BottomNavigation: View {
     }
     
     private struct CST {
-        static let activeColor: Color = .blue.mix(with: .white, by: 0.6)
         static let rectH: CGFloat = 80
     }
 }

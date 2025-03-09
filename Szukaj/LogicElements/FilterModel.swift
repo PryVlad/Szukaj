@@ -21,9 +21,9 @@ struct FilterModel {
     }
     
     var isOpenFullSearch = false
-    var isTapTextSearch = false
+    var isTapTextSearch: Bool? = false
     
-    var bigSelectedEnumValue: bigSliderCases = .it
+    var bigSliderSelected: BigSliderCases = .it
     var isBigFilterActiveTab = false
     
     var textInput = ""
@@ -31,7 +31,7 @@ struct FilterModel {
     private static let itCases: Set<STAN> = [.junior, .MID, .senior]
     
     
-    mutating func updateBigFilter(_ enumCase: FilterModel.bigSliderCases) {
+    mutating func updateBigFilter(_ enumCase: FilterModel.BigSliderCases) {
         var exist = false
         selectTab(enumCase)
         if bigCasesCheck == enumCase {
@@ -50,7 +50,7 @@ struct FilterModel {
     }
     
     
-    private var bigCasesCheck: bigSliderCases? {
+    private var bigCasesCheck: BigSliderCases? {
         if active == [.stan(.init( [.fizyczny] ))] {
             return .fiz
         }
@@ -60,16 +60,16 @@ struct FilterModel {
         return nil
     }
     
-    private mutating func selectTab(_ val: bigSliderCases) {
-        if bigSelectedEnumValue == val {
+    private mutating func selectTab(_ val: BigSliderCases) {
+        if bigSliderSelected == val {
             isBigFilterActiveTab.toggle()
         } else {
             isBigFilterActiveTab = true
         }
-        bigSelectedEnumValue = val
+        bigSliderSelected = val
     }
     
-    enum bigSliderCases: sliderEnum {
+    enum BigSliderCases: sliderEnum {
         case it, fiz
         
         static private let lib = [

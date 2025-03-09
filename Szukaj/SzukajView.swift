@@ -18,7 +18,7 @@ struct SzukajView: View {
                 .sheet(isPresented: $app.filter.isOpenFullSearch) {
                     FullFilterView(filterState: $isFilterApply)
                 }
-            if !app.filter.isTapTextSearch {
+            if app.filter.isTapTextSearch == false {
                 BottomNavigation()
             }
         }

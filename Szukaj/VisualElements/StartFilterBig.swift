@@ -13,46 +13,83 @@ struct StartFilterBig: View {
     @Namespace private var tabs
     @Namespace private var search
     
-    private let temp = CST.Rect.h*3.8
-    
     var body: some View {
         VStack(spacing: 0) {
-            if app.filter.isTapTextSearch {
-                Image(systemName: "xmark")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding() // [.horizontal, .top]
-                filterByText(namespase: search, id: "box")
-                    .padding(.vertical)
-                Color.clear
-                    .frame(height: temp)
-                topButton
-                    .padding(.bottom)
-                    .matchedGeometryEffect(id: "press", in: search)
+            if app.filter.isTapTextSearch != false {
+                textFilterOn
             } else {
-                scrollTabs
-                    .transition(.standartPush())
-                filterByText(namespase: search, id: "box")
-                    .padding(.vertical)
-                Group {
-                    topButton
-                        .padding(.top)
-                        .matchedGeometryEffect(id: "press", in: search)
-                    botButton
-                        .transition(.standartPush(true))
-                        .padding(.bottom)
-                }
-                .padding(.bottom)
+                textFilterOff
             }
         }
-        .background(bgColor)
-        .onTapGesture { focusDisable() }
+        .background(background)
     }
     
-    private func focusDisable() {
-        withAnimation(.bouncy) {
-            app.filter.isTapTextSearch = false
-            focus = false
+    private var background: some View {
+        bgColor
+            .onTapGesture {
+                if app.filter.isTapTextSearch == true {
+                    app.filter.isTapTextSearch = nil
+                    focus = false
+                }
+            }
+    }
+    
+    private var textFilterOff: some View {
+        VStack(spacing: 0) {
+            scrollTabs
+                .transition(.standartPush())
+            filterByText(namespase: search, id: "box")
+                .padding(.vertical)
+            Group {
+                topButton
+                    .padding(.top)
+                    .matchedGeometryEffect(id: "press", in: search)
+                botButton
+                    .transition(.standartPush(true))
+                    .padding(.bottom)
+            }
+            .padding(.bottom)
         }
+    }
+    
+    private var textFilterOn: some View {
+        VStack(spacing: 0) {
+            xmark
+            filterByText(namespase: search, id: "box")
+                .padding(.vertical)
+            Color.clear
+                .frame(height: CST.Predict.barBgSize)
+                .overlay(alignment: .topLeading) {
+                    predictBar
+                }
+            topButton
+                .padding(.bottom)
+                .matchedGeometryEffect(id: "press", in: search)
+        }
+    }
+    
+    private var predictBar: some View {
+        HStack(spacing: 0) {
+            Spacer().frame(width: CST.Spacing.standart+CST.Predict.offset)
+            HStack(spacing: CST.Spacing.standart/2) {
+                ForEach(predictStorage, id: \.self) { str in
+                    predictionButton(str)
+                }
+            }
+            Spacer().frame(width: CST.Spacing.standart+CST.Predict.offset)
+        }
+    }
+    
+    private var xmark: some View {
+        Button {
+            withAnimation(.spring(duration: 0.1)) {
+                app.filter.isTapTextSearch = false
+            }
+        } label: {
+            Image(systemName: "xmark")
+                .padding()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     private var botButton: some View {
@@ -83,6 +120,7 @@ struct StartFilterBig: View {
     
     @FocusState private var focus: Bool
     @State private var tempUserInput = ""
+    @State private var predictionLock = false
     
     private func filterByText(
         namespase: Namespace.ID, id: String
@@ -97,6 +135,7 @@ struct StartFilterBig: View {
                     TextField(" Type here", text: $tempUserInput)
                         .padding(.horizontal, CST.paddingH)
                         .focused($focus)
+                        .onChange(of: tempUserInput) { budgetRegex() }
                 }
                 .matchedGeometryEffect(id: id, in: tabs)
                 .onChange(of: focus) { focusStateChange() }
@@ -104,20 +143,65 @@ struct StartFilterBig: View {
         }
     }
     
+    private func predictionButton(_ str: String) -> some View {
+        Button {
+            tempUserInput = str
+        } label: {
+            Text(str)
+                .font(.system(size: CST.Predict.font))
+                .foregroundStyle(.white)
+                .background { pButtonBg }
+        }
+    }
+    
+    private var pButtonBg: some View {
+        GeometryReader { geometry in
+            RoundedRectangle(cornerRadius: CST.Rect.cornerR)
+                .foregroundStyle(.blue06)
+                .frame(width: geometry.size.width+CST.Predict.offset*2)
+                .offset(x: -CST.Predict.offset)
+        }
+    }
+    
+    @State var predictStorage: [String] = .init()
+    
+    private func budgetRegex() {
+        if !predictionLock && tempUserInput.count%3 == 0 {
+            predictionTimer()
+            predictStorage.removeAll()
+            if let v = app.getOffers.first(
+                where: {$0.name.contains(tempUserInput)} ) {
+                predictStorage.append(v.name)
+            }
+            if let c = app.getOffers.first(
+                where: {$0.company.contains(tempUserInput)} ) {
+                predictStorage.append(c.company)
+            }
+        }
+    }
+    
+    private func predictionTimer() {
+        predictionLock = true
+        let _ = Timer.scheduledTimer(withTimeInterval: 2,
+                                     repeats: false) { _ in
+            predictionLock = false
+        }
+    }
+    
     private func focusStateChange() {
-        if focus && !app.filter.isTapTextSearch {
+        if focus && app.filter.isTapTextSearch == false {
             withAnimation(.bouncy) {
                 app.filter.isTapTextSearch = true
                 app.allowTotalOffersRoll = false
             }
-        } else if app.filter.isTapTextSearch {
+        } else if app.filter.isTapTextSearch == true {
             focus = true
         }
     }
         
     private var scrollTabs: some View {
         SliderOfOptions(isHighlightOn: app.filter.isBigFilterActiveTab,
-                        enumValNow: app.filter.bigSelectedEnumValue,
+                        enumValNow: app.filter.bigSliderSelected,
                         namespace: tabs,
                         tapFunc: { enumCase in app.filter.updateBigFilter(enumCase)
         })
@@ -131,6 +215,11 @@ struct StartFilterBig: View {
     private struct CST {
         static let paddingH: CGFloat = 10
         
+        struct Predict {
+            static let barBgSize = CST.Rect.h*3
+            static let offset: CGFloat = 5
+            static let font: CGFloat = 24
+        }
         struct Rect {
             static let h: CGFloat = 50
             static let cornerR: CGFloat = 50

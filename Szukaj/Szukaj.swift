@@ -36,7 +36,12 @@ class Szukaj: ObservableObject {
     var getOffers: [SzukajRoot.Offer] {
         let cv = OfferCVFilter(offerFilter: OfferBaseFilter())
         let stan = OfferSTANFilter(offerFilter: cv)
-        return stan.filter(offers: szukaj.offers, by: filter.active)
+        let beforeText = stan.filter(offers: szukaj.offers, by: filter.active)
+        return filter.textInput.count > 0
+        ? beforeText.filter({
+            $0.name.contains(filter.textInput) ||
+            $0.company.contains(filter.textInput) })
+        : beforeText
     }
     
     func loadMore() { // LoadingView, await

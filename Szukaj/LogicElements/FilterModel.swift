@@ -26,7 +26,7 @@ struct FilterModel {
     var bigSliderSelected: BigSliderCases = .it
     var isBigFilterActiveTab = false
     
-    var textInput = ""
+    var textInput: String = .init()
     
     private static let itCases: Set<STAN> = [.junior, .MID, .senior]
     
